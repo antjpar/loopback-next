@@ -169,6 +169,50 @@ describe('operationArgsParser', () => {
     expect(args).to.eql([{key1: ['value1', 'value2']}]);
   });
 
+  it('parses body parameter for text data', async () => {
+    const req = givenRequest({
+      url: '/',
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+      payload: 'plain-text',
+    });
+
+    const spec = givenOperationWithRequestBody({
+      description: 'data',
+      content: {
+        'text/plain': {schema: {type: 'string'}},
+      },
+    });
+    const route = givenResolvedRoute(spec);
+
+    const args = await parseOperationArgs(req, route);
+
+    expect(args).to.eql(['plain-text']);
+  });
+
+  it('parses body parameter for html data', async () => {
+    const req = givenRequest({
+      url: '/',
+      headers: {
+        'Content-Type': 'text/html',
+      },
+      payload: '<html><body><h1>Hello</h1></body></html>',
+    });
+
+    const spec = givenOperationWithRequestBody({
+      description: 'data',
+      content: {
+        'text/html': {schema: {type: 'string'}},
+      },
+    });
+    const route = givenResolvedRoute(spec);
+
+    const args = await parseOperationArgs(req, route);
+
+    expect(args).to.eql(['<html><body><h1>Hello</h1></body></html>']);
+  });
+
   context('in:query style:deepObject', () => {
     it('parses JSON-encoded string value', async () => {
       const req = givenRequest({

@@ -1,3 +1,12 @@
+---
+lang: en
+title: 'Contributing code in LoopBack 4'
+keywords: LoopBack 4.0, contributing, community
+sidebar: lb4_sidebar
+permalink: /doc/en/lb4/code-contrib-lb4.html
+toc: false
+---
+
 # Developing LoopBack
 
 This document describes how to develop modules living in loopback-next monorepo.
@@ -7,12 +16,16 @@ See [Monorepo overview](./MONOREPO.md) for a list of all packages.
 - [Building the project](#building-the-project)
 - [Running tests](#running-tests)
 - [Coding rules](#coding-rules)
+- [Working with dependencies](#working-with-dependencies)
 - [File naming convention](#file-naming-convention)
 - [API documentation](#api-documentation)
 - [Commit message guidelines](#commit-message-guidelines)
+- [Making breaking changes](#making-breaking-changes)
 - [Releasing new versions](#releasing-new-versions)
 - [Adding a new package](#adding-a-new-package)
+- [Upgrading TypeScript/eslint](#upgrading-typescripteslint)
 - [How to test infrastructure changes](#how-to-test-infrastructure-changes)
+- [Renovate bot](#renovate-bot)
 
 ## Setting up development environment
 
@@ -53,7 +66,7 @@ command will install npm dependencies for all packages and create symbolic links
 for intra-dependencies:
 
 ```sh
-npm install
+npm ci
 ```
 
 The next step is to compile all packages from TypeScript to JavaScript:
@@ -79,7 +92,7 @@ It does all you need:
 - Compile TypeScript
 - Run all tests
 - Check code formatting using [Prettier](https://prettier.io/)
-- Lint the code using [TSLint](https://palantir.github.io/tslint/)
+- Lint the code using [ESLint](https://typescript-eslint.io/)
 
 ## Coding rules
 
@@ -95,8 +108,8 @@ It does all you need:
 
 We use two tools to keep our codebase healthy:
 
-- [TSLint](https://palantir.github.io/tslint/) to statically analyse our source
-  code and detect common problems.
+- [ESLint](https://typescript-eslint.io/) to statically analyse our source code
+  and detect common problems.
 - [Prettier](https://prettier.io/) to keep our code always formatted the same
   way, avoid style discussions in code reviews, and save everybody's time an
   energy.
@@ -113,6 +126,64 @@ npm script `lint:fix`.
 
 ```sh
 npm run lint:fix
+```
+
+## Working with dependencies
+
+We use npm's
+[package-lock feature](https://docs.npmjs.com/files/package-lock.json) to speed
+up our development workflow and CI builds.
+
+For individual packages within the monorepo, `lerna bootstrap` calls `npm ci` in
+a CI environment or with `--ci` to install (deep) dependencies as specified in
+`package-lock.json` file. Otherwise, `npm install` is run with the corresponding
+`package.json`.
+
+Top-level (`loopback-next`) dependencies are installed either from
+`package-lock.json` (when you run `npm ci`), or resolved freshly from the npm
+registry (when you run `npm install`).
+
+**IMPORTANT: Dependencies resolved locally within the monorepo must be excluded
+from package-lock files.**
+
+### Updating package locks
+
+If you ever end up with corrupted or out-of-date package locks, run the
+following commands to fix the problem:
+
+```sh
+$ npm run update-package-locks
+```
+
+### Adding dependencies
+
+Use the following command to add or update dependency `dep` in a package `name`:
+
+```sh
+$ npx lerna add --scope ${name} ${dep}
+```
+
+For example:
+
+```sh
+$ npx lerna add --scope @loopback/rest debug
+```
+
+See [lerna add](https://github.com/lerna/lerna/blob/master/commands/add#readme)
+for more details.
+
+**NOTE**: At the moment, `lerna` does not update `package-lock.json` files when
+adding a dependency to a scope, see
+[lerna#1989](https://github.com/lerna/lerna/issues/1989). You have to re-create
+package locks manually, see [Updating package locks](#updating-package-locks)
+above.
+
+### Updating dependencies
+
+To update dependencies to their latest compatible versions:
+
+```sh
+npm run update-all-deps
 ```
 
 ## File naming convention
@@ -137,20 +208,21 @@ tests (unit, acceptance and integration), with the convention
 Examples are:
 
 ```
-test/acceptance/application.acceptance.ts
-test/integration/user.controller.integration.ts
-test/unit/application.unit.ts
+src/__tests__/acceptance/application.acceptance.ts
+src/__tests__/integration/user.controller.integration.ts
+src/__tests__/unit/application.unit.ts
 ```
 
 ## API Documentation
 
-We use [strong-docs](https://github.com/strongloop/strong-docs) to generate API
-documentation for all our packages. This documentation is generated when
-publishing new releases to npmjs.org and it's picked up by
-<http://apidocs.loopback.io/>.
+We use
+[@loopback/tsdocs](https://github.com/strongloop/loopback-next/tree/master/packages/tsdocs)
+to generate API documentation for all our packages. This documentation is
+generated when publishing new releases to npmjs.org and it's picked up by
+https://loopback.io/doc/en/lb4/apidocs.index.html.
 
-You can preview API docs locally by opening the file `docs/apidocs.html` in your
-browser.
+You can preview API docs locally by running `npm run tsdocs` and open
+[apidocs/index.md](apidocs/index.md).
 
 ## Commit message guidelines
 
@@ -204,8 +276,9 @@ The **type** must be one of the following:
 #### scope
 
 The **scope** must be a list of one or more packages contained in this monorepo.
-Each scope name must match a directory name in [packages/](../packages), e.g.
-`core` or `context`.
+Each scope name must match a directory name in
+[packages/](https://github.com/strongloop/loopback-next/tree/master/packages),
+e.g. `core` or `context`.
 
 _Note: If multiple packages are affected by a pull request, don't list the
 scopes as the commit linter currently only supports only one scope being listed
@@ -255,6 +328,90 @@ npm i -g commitizen
 And to use it, simply call `git cz` instead of `git commit`. The tool will help
 you generate a commit message that follows the above guidelines.
 
+## Making breaking changes
+
+LoopBack is following [Semantic Versioning](https://semver.org). Any change
+that's not fully backward compatible with previous versions has to increase the
+major version number, e.g. `1.4.2 -> 2.0.0`.
+
+In general, we try to avoid breaking backward compatibility too often and strive
+to limit the frequency of major releases to about once or twice a year.
+
+- Breaking changes make it difficult for our users to always stay at the latest
+  version of the framework.
+- Every additional major version we have to support adds extra maintenance
+  overhead.
+- In our
+  [Long Term Support policy](https://loopback.io/doc/en/contrib/Long-term-support.html),
+  we are committing to support every major module version for at least 12 months
+  after it entered LTS mode and also support it for the entire LTS lifetime of
+  the connected Node.js major version. If we release major versions too often,
+  we can end up with a long list of versions we have to keep supporting for long
+  time.
+
+Whenever possible, consider implementing a feature flag that allows users to
+decide when to migrate to the new behavior. Make this flag disabled by default
+to preserve backward compatibility.
+
+However, we do recognize that often a breaking change is the most sensible thing
+to do. When that time comes:
+
+- Describe incompatibilites for release notes
+- Look for more breaking changes to include in the release
+- Update list of supported versions
+
+### Describe incompatibilites for release notes
+
+In the pull request introducing the breaking change, provide a descriptive
+[footer](#footer-optional) explaining the breaking change to our users. This
+content will be used by release tooling to compile comprehensive release notes.
+
+Put yourself in the shoes of module users and try to answer the following
+questions:
+
+- How can I find if my project is affected by this change?
+
+- What does this change means for my project? What is going to change?
+
+- How can I migrate my project to the new major version? What steps do I need to
+  make?
+
+### Look for more breaking changes
+
+Look for other features or fixes that require a breaking change. Consider
+grouping multiple backward incompatible changes into a single semver major
+release.
+
+Few examples of changes that are usually easy to make:
+
+- Change the default value of a feature flag from "false" (backward-compatible
+  behavior) to "true" (the new behavior).
+
+- Deprecate a compatibility feature flag that's already enabled by default.
+
+- Remove a deprecated feature flag.
+
+- Drop support for a major version of Node.js that has already reached it's end
+  of life or that will reach it soon (in the next 4-8 weeks).
+
+### Update list of supported versions
+
+Make sure the package's README has an up-to-date section about the supported
+versions. Read our
+[Long Term Support policy](https://loopback.io/doc/en/contrib/Long-term-support.html)
+to understand the rules governing transition between different support levels.
+
+- There should be at most one version in Active LTS mode. This version moves to
+  Maintenance LTS.
+
+- The version listed as Current is entering Active LTS mode.
+
+- The new major version is becoming Current.
+
+It is important to make these updates _before_ publishing the new major version,
+so that new content is included on the package page provided by
+[npmjs.com](https://www.npmjs.com/).
+
 ## Releasing new versions
 
 When we are ready to tag and publish a release, run the following commands:
@@ -272,7 +429,7 @@ The `release` script will automatically perform the tasks for all packages:
 - Install/link dependencies
 - Transpile TypeScript files into JavaScript
 - Run mocha tests
-- Check lint (tslint and prettier) issues
+- Check lint (eslint and prettier) issues
 
 If all steps are successful, it prompts you to publish packages into npm
 repository.
@@ -281,8 +438,9 @@ repository.
 
 ### Create a new package
 
-To add a new package, create a folder in [`packages`](packages) as the root
-directory of your module. For example,
+To add a new package, create a folder in
+[`packages`](https://github.com/strongloop/loopback-next/tree/master/packages)
+as the root directory of your module. For example,
 
 ```sh
 cd loopback-next/packages
@@ -333,24 +491,41 @@ Please register the new package in the following files:
 
 - Update [MONOREPO.md](./MONOREPO.md) - insert a new table row to describe the
   new package, please keep the rows sorted by package name.
-- Update [docs/apidocs.html](../apidocs.html) - add a link to API docs for this
-  new package.
-- Update [Reserved-binding-keys.md](./Reserved-binding-keys.mds) - add a link to
+- Update [Reserved-binding-keys.md](./Reserved-binding-keys.md) - add a link to
   the apidocs on Binding Keys if the new package has any.
-- Update [CODEOWNERS](../../CODEOWNERS) - add a new entry listing the primary
-  maintainers (owners) of the new package.
-- Ask somebody from the IBM team (e.g. [@bajtos](https://github.com/bajtos) or
-  [@raymondfeng](https://github.com/raymondfeng) to enlist the new package on
-  <http://apidocs.loopback.io/>.
+- Update
+  [CODEOWNERS](https://github.com/strongloop/loopback-next/blob/master/CODEOWNERS) -
+  add a new entry listing the primary maintainers (owners) of the new package.
+
+## Upgrading TypeScript/eslint
+
+In order to support eslint extensions with a peer dependency on eslint, we have
+to specify `typescript` and `eslint` dependency in multiple places in our
+monorepo.
+
+Steps to upgrade `typescript` or `eslint` to a newer version:
+
+1. Update the dependencies in `@loopback/build`, this is the source of truth for
+   the rest of the monorepo.
+
+   ```shell
+   $ (cd packages/build && npm update typescript eslint)
+   ```
+
+2. Propagate the change to other places to keep everything consistent.
+
+   ```shell
+   $ node bin/sync-dev-deps
+   ```
 
 ## How to test infrastructure changes
 
-When making changes to project infrastructure, e.g. modifying `tsc` or `tslint`
+When making changes to project infrastructure, e.g. modifying `tsc` or `eslint`
 configuration, it's important to verify that all usage scenarios keep working.
 
 ### Verify TypeScript setup
 
-1.  Open any existing TypeScript file, e.g. `packages/src/index.ts`
+1.  Open any existing TypeScript file, e.g. `packages/core/src/index.ts`
 
 2.  Add a small bit of code to break TypeScript's type checks, for example:
 
@@ -363,14 +538,10 @@ configuration, it's important to verify that all usage scenarios keep working.
 4.  Verify that the build failed and the compiler error message shows a path
     relative to monorepo root, e.g. `packages/src/index.ts`.
 
-    _(This is does not work now, `tsc` is reporting paths relative to individual
-    package directories. See
-    <https://github.com/strongloop/loopback-next/issues/1010>)_
-
 5.  Test integration with supported IDEs:
-    - [VS Code](./VSCode.md#how-to-verify-typescript-setup)
+    - [VS Code](./VSCODE.md#how-to-verify-typescript-setup)
 
-### Verify TSLint setup
+### Verify ESLint setup
 
 1.  Open any existing TypeScript file, e.g. `packages/src/index.ts`
 
@@ -393,4 +564,47 @@ configuration, it's important to verify that all usage scenarios keep working.
 
 5.  Test integration with supported IDEs:
 
-    - [VS Code](./VSCode.md#how-to-verify-tslint-setup)
+    - [VS Code](./VSCODE.md#how-to-verify-eslint-setup)
+
+### tsconfig files
+
+In the [`loopback-next`](https://github.com/strongloop/loopback-next) monorepo,
+`TypeScript` is set up in two places:
+
+1. When using VS Code, the `TypeScript` engine views `loopback-next` as a single
+   big project.
+
+   This enables the "refactor - rename" command to change all places using the
+   renamed symbol, and also makes "go to definition" command jump to `.ts` files
+   containing the original source code. Otherwise "refactor - rename" works
+   within the same package only and "go to definition" jumps to `.d.ts` files.
+
+2. When building the monorepo, we need to build the packages individually, so
+   that one `dist` directory is created for each package.
+
+This is why we have two sets of `tsconfig` files:
+
+- At monorepo root, there is `tsconfig.json` used by VS Code.
+- Inside each package, there is `tsconfig.build.json` used by `npm run build`
+  command.
+
+## Renovate bot
+
+In loopback-next, we use package-lock files to speed up `npm install` times and
+[Renovate bot](http://renovatebot.com) to keep our lock files up to date.
+
+The bot is configured to maintain a special issue called
+`Update Dependencies (Renovate Bot)` where it lists all pull requests in
+progress and in queue:
+
+- [loopback-next#3042](https://github.com/strongloop/loopback-next/issues/3042)
+- [loopback4-example-shopping#94](https://github.com/strongloop/loopback4-example-shopping/issues/94)
+
+Pull requests opened by RenovateBot can be merged by pressing GitHub's big green
+button once all checks are green (all CI builds finished).
+
+RenovateBot periodically checks for changes on `master` and rebases pull request
+in progress when new commits were added. If GitHub complains that RenovateBot's
+pull request is out of date, then just wait until it's rebased and checks are
+green. The bot usually updates pull requests every hour. Alternatively, tick the
+check-box in the pull request description or in "Update Dependencies" issue.

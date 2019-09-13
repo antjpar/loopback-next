@@ -6,8 +6,8 @@ extensions installed:
 
 - [Prettier - Code Formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
   for automatic formatting of source files on save.
-- [TSLint](https://marketplace.visualstudio.com/items?itemName=eg2.tslint) to
-  highlight and auto-fix linting problems directly in the editor.
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+  to highlight and auto-fix linting problems directly in the editor.
 
 Our monorepo comes with few preconfigured
 [VSCode Tasks](https://code.visualstudio.com/docs/editor/tasks):
@@ -20,7 +20,7 @@ Our monorepo comes with few preconfigured
 
 ### Compilation errors
 
-1.  Open any existing TypeScript file, e.g. `packages/src/index.ts`
+1.  Open any existing TypeScript file, e.g. `packages/core/src/index.ts`
 
 2.  Add a small bit of code to break TypeScript's type checks, for example:
 
@@ -38,10 +38,10 @@ Our monorepo comes with few preconfigured
 
 4.  Check VS Code's
     [PROBLEMS Window](https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_errors-and-warnings).
-    There should be an entry showing the same tslint error. When you click on
+    There should be an entry showing the same eslint error. When you click on
     the entry, it should jump on the problematic line.
 
-5.  Close the editor tab. (This will clear the PROBLEMS entry reported by TSLint
+5.  Close the editor tab. (This will clear the PROBLEMS entry reported by ESLint
     extension).
 
 6.  Run the test task ("Tasks: Run test task"). This will invoke package scripts
@@ -51,9 +51,7 @@ Our monorepo comes with few preconfigured
     VSCode.
 
 8.  Verify that compilation errors are correctly associated with the problematic
-    source code line. _(This is does not work now, `tsc` is reporting paths
-    relative to individual package directories. See
-    <https://github.com/strongloop/loopback-next/issues/1010>)_
+    source code line.
 
 ### Navigation in VS Code
 
@@ -69,15 +67,15 @@ using the renamed entity. Two different scenarios to verify: rename at the place
 where the entity is defined, rename at the place where the entity is used. (You
 can e.g. rename `inject` to test.)
 
-## How to verify TSLint setup
+## How to verify ESLint setup
 
 1.  Open any existing TypeScript file, e.g. `packages/src/index.ts`
 
-2.  Verify that TSLint extension is not reporting any warnings in the output
+2.  Verify that ESLint extension is not reporting any warnings in the output
     window:
 
     - pres _Cmd+shift+P_ or _Ctrl+shift+P_ to open task selector
-    - find and run the task `TSLint: Show Output`
+    - find and run the task `ESLint: Show Output`
     - check the logs
 
     An example of a warning we want to **avoid**:
@@ -99,21 +97,21 @@ can e.g. rename `inject` to test.)
     e.g.
 
     ```text
-    [tslint] Type declaration of 'any' loses type-safety. Consider replacing it with a more precise type. (no-any)
+    [eslint] Type declaration of 'any' loses type-safety. Consider replacing it with a more precise type. (no-any)
     ```
 
 5.  Check VS Code's
     [PROBLEMS Window](https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_errors-and-warnings).
-    There should be an entry showing the same tslint error. When you click on
+    There should be an entry showing the same eslint error. When you click on
     the entry, it should jump on the problematic line.
 
-6.  Close the editor tab. (This will clear the PROBLEMS entry reported by TSLint
+6.  Close the editor tab. (This will clear the PROBLEMS entry reported by ESLint
     extension).
 
 7.  Run the test task ("Tasks: Run test task"). This will invoke package scripts
     like `npm test` under the hood.
 
-8.  Open "Tasks" OUTPUT window and verify that two tslint problems were
+8.  Open "Tasks" OUTPUT window and verify that two eslint problems were
     reported:
 
     ```text

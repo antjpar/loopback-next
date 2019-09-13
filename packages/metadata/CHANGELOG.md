@@ -3,7 +3,290 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.0.0](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@0.9.15...@loopback/metadata@1.0.0) (2018-10-10)
+## [1.3.1](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.3.0...@loopback/metadata@1.3.1) (2019-09-06)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+# [1.3.0](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.2.10...@loopback/metadata@1.3.0) (2019-09-03)
+
+
+### Features
+
+* **metadata:** allow custom decorator name for error messages ([c466566](https://github.com/strongloop/loopback-next/commit/c466566))
+
+
+
+
+
+## [1.2.10](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.2.9...@loopback/metadata@1.2.10) (2019-08-19)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.2.9](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.2.8...@loopback/metadata@1.2.9) (2019-08-15)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.2.8](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.2.7...@loopback/metadata@1.2.8) (2019-07-31)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.2.7](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.2.6...@loopback/metadata@1.2.7) (2019-07-26)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.2.6](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.2.5...@loopback/metadata@1.2.6) (2019-07-17)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.2.5](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.2.4...@loopback/metadata@1.2.5) (2019-06-28)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.2.4](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.2.3...@loopback/metadata@1.2.4) (2019-06-21)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.2.3](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.2.2...@loopback/metadata@1.2.3) (2019-06-20)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.2.2](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.2.1...@loopback/metadata@1.2.2) (2019-06-17)
+
+
+### Bug Fixes
+
+* **metadata:** don't rely on `instanceof` checks ([a009aaf](https://github.com/strongloop/loopback-next/commit/a009aaf))
+
+
+
+
+
+## [1.2.1](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.2.0...@loopback/metadata@1.2.1) (2019-06-06)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+# [1.2.0](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.1.7...@loopback/metadata@1.2.0) (2019-06-03)
+
+
+### Features
+
+* replace tslint with eslint ([44185a7](https://github.com/strongloop/loopback-next/commit/44185a7))
+
+
+
+
+
+## [1.1.7](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.1.6...@loopback/metadata@1.1.7) (2019-05-31)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.1.6](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.1.5...@loopback/metadata@1.1.6) (2019-05-30)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.1.5](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.1.4...@loopback/metadata@1.1.5) (2019-05-23)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.1.4](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.1.3...@loopback/metadata@1.1.4) (2019-05-14)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.1.3](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.1.2...@loopback/metadata@1.1.3) (2019-05-10)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.1.2](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.1.1...@loopback/metadata@1.1.2) (2019-05-09)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.1.1](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.1.0...@loopback/metadata@1.1.1) (2019-05-06)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+# [1.1.0](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.13...@loopback/metadata@1.1.0) (2019-04-20)
+
+
+### Features
+
+* **metadata:** support symbols used as property/method keys ([9e7ea17](https://github.com/strongloop/loopback-next/commit/9e7ea17))
+
+
+
+
+
+## [1.0.13](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.12...@loopback/metadata@1.0.13) (2019-04-11)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.0.12](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.11...@loopback/metadata@1.0.12) (2019-04-09)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.0.11](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.10...@loopback/metadata@1.0.11) (2019-04-05)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.0.10](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.9...@loopback/metadata@1.0.10) (2019-03-22)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.0.9](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.8...@loopback/metadata@1.0.9) (2019-03-22)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.0.8](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.7...@loopback/metadata@1.0.8) (2019-03-12)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.0.7](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.6...@loopback/metadata@1.0.7) (2019-02-25)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.0.6](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.5...@loopback/metadata@1.0.6) (2019-02-08)
+
+
+### Bug Fixes
+
+* update to the most recent lodash version ([65ee865](https://github.com/strongloop/loopback-next/commit/65ee865))
+
+
+
+
+
+## [1.0.5](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.4...@loopback/metadata@1.0.5) (2019-01-28)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.0.4](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.3...@loopback/metadata@1.0.4) (2019-01-14)
+
+
+### Bug Fixes
+
+* rework tslint comments disabling "no-unused-variable" rule ([a18a3d7](https://github.com/strongloop/loopback-next/commit/a18a3d7))
+
+
+
+
+
+## [1.0.3](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.2...@loopback/metadata@1.0.3) (2018-12-20)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+## [1.0.2](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.1...@loopback/metadata@1.0.2) (2018-12-13)
+
+**Note:** Version bump only for package @loopback/metadata
+
+
+
+
+
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/strongloop/loopback-next/compare/@loopback/metadata@1.0.0...@loopback/metadata@1.0.1) (2018-11-08)
 
 **Note:** Version bump only for package @loopback/metadata
 

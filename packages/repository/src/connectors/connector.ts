@@ -1,16 +1,16 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {Model} from '../model';
 import {
   AnyObject,
-  Options,
   Command,
   NamedParameters,
+  Options,
   PositionalParameters,
 } from '../common-types';
+import {Model} from '../model';
 
 /**
  * Common properties/operations for connectors
@@ -24,7 +24,6 @@ export interface Connector {
   ping(): Promise<void>; // Ping the underlying system
   execute?(
     command: Command,
-    // tslint:disable:no-any
     parameters: NamedParameters | PositionalParameters,
     options?: Options,
   ): Promise<AnyObject>;

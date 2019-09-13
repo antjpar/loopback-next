@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2018. All Rights Reserved.
 // Node module: @loopback/example-todo
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -9,6 +9,7 @@ import {
   del,
   get,
   getFilterSchemaFor,
+  getModelSchemaRef,
   param,
   patch,
   post,
@@ -29,27 +30,37 @@ export class TodoController {
     responses: {
       '200': {
         description: 'Todo model instance',
-        content: {'application/json': {'x-ts-type': Todo}},
+        content: {'application/json': {schema: getModelSchemaRef(Todo)}},
       },
     },
   })
-  async createTodo(@requestBody() todo: Todo): Promise<Todo> {
+  async createTodo(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Todo, {exclude: ['id']}),
+        },
+      },
+    })
+    todo: Omit<Todo, 'id'>,
+  ): Promise<Todo> {
     if (todo.remindAtAddress) {
       // TODO(bajtos) handle "address not found"
       const geo = await this.geoService.geocode(todo.remindAtAddress);
       // Encode the coordinates as "lat,lng" (Google Maps API format). See also
       // https://stackoverflow.com/q/7309121/69868
       // https://gis.stackexchange.com/q/7379
+      // eslint-disable-next-line require-atomic-updates
       todo.remindAtGeo = `${geo[0].y},${geo[0].x}`;
     }
-    return await this.todoRepo.create(todo);
+    return this.todoRepo.create(todo);
   }
 
   @get('/todos/{id}', {
     responses: {
       '200': {
         description: 'Todo model instance',
-        content: {'application/json': {'x-ts-type': Todo}},
+        content: {'application/json': {schema: getModelSchemaRef(Todo)}},
       },
     },
   })
@@ -57,7 +68,7 @@ export class TodoController {
     @param.path.number('id') id: number,
     @param.query.boolean('items') items?: boolean,
   ): Promise<Todo> {
-    return await this.todoRepo.findById(id);
+    return this.todoRepo.findById(id);
   }
 
   @get('/todos', {
@@ -66,16 +77,17 @@ export class TodoController {
         description: 'Array of Todo model instances',
         content: {
           'application/json': {
-            schema: {type: 'array', items: {'x-ts-type': Todo}},
+            schema: {type: 'array', items: getModelSchemaRef(Todo)},
           },
         },
       },
     },
   })
   async findTodos(
-    @param.query.object('filter', getFilterSchemaFor(Todo)) filter?: Filter,
+    @param.query.object('filter', getFilterSchemaFor(Todo))
+    filter?: Filter<Todo>,
   ): Promise<Todo[]> {
-    return await this.todoRepo.find(filter);
+    return this.todoRepo.find(filter);
   }
 
   @put('/todos/{id}', {
@@ -101,7 +113,14 @@ export class TodoController {
   })
   async updateTodo(
     @param.path.number('id') id: number,
-    @requestBody() todo: Todo,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Todo, {partial: true}),
+        },
+      },
+    })
+    todo: Partial<Todo>,
   ): Promise<void> {
     await this.todoRepo.updateById(id, todo);
   }

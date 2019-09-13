@@ -3,6 +3,618 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.30.0...@loopback/docs@2.0.0) (2019-09-06)
+
+
+### Bug Fixes
+
+* **docs:** typo in example ([030360b](https://github.com/strongloop/loopback-next/commit/030360b))
+
+
+### Documentation
+
+* update the user profile related docs ([0475fe6](https://github.com/strongloop/loopback-next/commit/0475fe6))
+
+
+### BREAKING CHANGES
+
+* PR #3590 rewrote type UserProfile, add the missing
+* tag here to amend the one in #3590
+
+
+
+
+
+# [1.30.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.29.3...@loopback/docs@1.30.0) (2019-09-03)
+
+
+### Bug Fixes
+
+* **docs:** add contributing guide to LB4 docs ([d88e9e2](https://github.com/strongloop/loopback-next/commit/d88e9e2))
+* **docs:** add diagrams to concepts ([5d90653](https://github.com/strongloop/loopback-next/commit/5d90653))
+
+
+### Features
+
+* **docs:** add diagrams for context/binding/component ([22fce21](https://github.com/strongloop/loopback-next/commit/22fce21))
+* **rest-crud:** initial implementation ([4374160](https://github.com/strongloop/loopback-next/commit/4374160))
+
+
+
+
+
+## [1.29.3](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.29.2...@loopback/docs@1.29.3) (2019-08-19)
+
+**Note:** Version bump only for package @loopback/docs
+
+
+
+
+
+## [1.29.2](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.29.1...@loopback/docs@1.29.2) (2019-08-15)
+
+**Note:** Version bump only for package @loopback/docs
+
+
+
+
+
+## [1.29.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.29.0...@loopback/docs@1.29.1) (2019-08-15)
+
+**Note:** Version bump only for package @loopback/docs
+
+
+
+
+
+# [1.29.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.28.0...@loopback/docs@1.29.0) (2019-08-15)
+
+
+### Features
+
+* **repository:** expose beginTransaction() API ([0471315](https://github.com/strongloop/loopback-next/commit/0471315))
+
+
+
+
+
+# [1.28.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.27.0...@loopback/docs@1.28.0) (2019-07-31)
+
+
+### Features
+
+* add Connector docs to LB4 docs ([2d7066c](https://github.com/strongloop/loopback-next/commit/2d7066c))
+
+
+
+
+
+# [1.27.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.26.1...@loopback/docs@1.27.0) (2019-07-26)
+
+
+### Bug Fixes
+
+* **docs:** refactor sidebar ([27a7e15](https://github.com/strongloop/loopback-next/commit/27a7e15))
+* add support for excluding custom pk from POST requests ([9694d99](https://github.com/strongloop/loopback-next/commit/9694d99))
+
+
+### Features
+
+* **context:** allow [@config](https://github.com/config).* to specify the target binding key ([42b7b98](https://github.com/strongloop/loopback-next/commit/42b7b98))
+* update examples and docs to use getModelSchemaRef ([99758b1](https://github.com/strongloop/loopback-next/commit/99758b1))
+* **repository:** add hidden properties in model ([e669913](https://github.com/strongloop/loopback-next/commit/e669913))
+* remove openapi-v3-types package ([2a93395](https://github.com/strongloop/loopback-next/commit/2a93395))
+
+
+
+
+
+## [1.26.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.26.0...@loopback/docs@1.26.1) (2019-07-17)
+
+
+### Bug Fixes
+
+* **docs:** exclude id from POST request body ([d7ff903](https://github.com/strongloop/loopback-next/commit/d7ff903))
+* **docs:** make foreign key required and relation properties optional ([f0811aa](https://github.com/strongloop/loopback-next/commit/f0811aa))
+
+
+
+
+
+# [1.26.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.25.0...@loopback/docs@1.26.0) (2019-06-28)
+
+
+### Bug Fixes
+
+* **docs:** change folder naming for tests ([f2ba22d](https://github.com/strongloop/loopback-next/commit/f2ba22d))
+* **docs:** remove note about not supporting partial updates ([86fd23a](https://github.com/strongloop/loopback-next/commit/86fd23a))
+
+
+### Features
+
+* **cli:** modify Controller templates to allow partial updates via PATCH ([c7c6695](https://github.com/strongloop/loopback-next/commit/c7c6695))
+
+
+
+
+
+# [1.25.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.24.0...@loopback/docs@1.25.0) (2019-06-21)
+
+
+### Bug Fixes
+
+* update sample todo and todo-lists ([99d3aa0](https://github.com/strongloop/loopback-next/commit/99d3aa0))
+
+
+### Features
+
+* add navigational properties to todo-list example ([fedb6a7](https://github.com/strongloop/loopback-next/commit/fedb6a7)), closes [#3195](https://github.com/strongloop/loopback-next/issues/3195)
+
+
+
+
+
+# [1.24.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.23.0...@loopback/docs@1.24.0) (2019-06-20)
+
+
+### Features
+
+* shared Repository test suite ([e9dca4c](https://github.com/strongloop/loopback-next/commit/e9dca4c))
+
+
+
+
+
+# [1.23.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.22.1...@loopback/docs@1.23.0) (2019-06-17)
+
+
+### Bug Fixes
+
+* **docs:** fix soap calculator controller parameters ([d549c44](https://github.com/strongloop/loopback-next/commit/d549c44))
+* **docs:** update soap calculator controller ([71d9d64](https://github.com/strongloop/loopback-next/commit/71d9d64))
+
+
+### Features
+
+* **rest:** expose request body validation options to be configurable ([00ec6df](https://github.com/strongloop/loopback-next/commit/00ec6df))
+
+
+
+
+
+## [1.22.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.22.0...@loopback/docs@1.22.1) (2019-06-06)
+
+**Note:** Version bump only for package @loopback/docs
+
+
+
+
+
+# [1.22.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.21.1...@loopback/docs@1.22.0) (2019-06-06)
+
+
+### Features
+
+* **cli:** add lb4 interceptor command to generate interceptors ([58017b6](https://github.com/strongloop/loopback-next/commit/58017b6))
+
+
+
+
+
+## [1.21.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.21.0...@loopback/docs@1.21.1) (2019-06-03)
+
+**Note:** Version bump only for package @loopback/docs
+
+
+
+
+
+# [1.21.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.20.1...@loopback/docs@1.21.0) (2019-06-03)
+
+
+### Bug Fixes
+
+* **docs:** add type param to Filter and Where ([a1d88a9](https://github.com/strongloop/loopback-next/commit/a1d88a9))
+
+
+### Features
+
+* add navigational properties to find* methods ([1f0aa0b](https://github.com/strongloop/loopback-next/commit/1f0aa0b))
+* replace tslint with eslint ([44185a7](https://github.com/strongloop/loopback-next/commit/44185a7))
+
+
+
+
+
+## [1.20.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.20.0...@loopback/docs@1.20.1) (2019-05-31)
+
+**Note:** Version bump only for package @loopback/docs
+
+
+
+
+
+# [1.20.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.19.0...@loopback/docs@1.20.0) (2019-05-30)
+
+
+### Features
+
+* **build:** add eslint scripts and default configs ([a6abe86](https://github.com/strongloop/loopback-next/commit/a6abe86))
+* **cli:** add `lb4 relation` command ([75939a4](https://github.com/strongloop/loopback-next/commit/75939a4))
+* **tsdocs:** add integration with api-extractor/documenter ([c8d9572](https://github.com/strongloop/loopback-next/commit/c8d9572))
+
+
+
+
+
+# [1.19.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.18.0...@loopback/docs@1.19.0) (2019-05-23)
+
+
+### Bug Fixes
+
+* **docs:** add life cycle observer cli to sidebar ([224f446](https://github.com/strongloop/loopback-next/commit/224f446))
+
+
+### Features
+
+* **context:** support binding config and [@inject](https://github.com/inject).config ([a392852](https://github.com/strongloop/loopback-next/commit/a392852))
+
+
+
+
+
+# [1.18.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.17.1...@loopback/docs@1.18.0) (2019-05-14)
+
+
+### Features
+
+* **context:** add binding comparator to sort bindings ([ae3d61f](https://github.com/strongloop/loopback-next/commit/ae3d61f))
+* add lb3 application ([bf60011](https://github.com/strongloop/loopback-next/commit/bf60011))
+
+
+
+
+
+## [1.17.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.17.0...@loopback/docs@1.17.1) (2019-05-10)
+
+**Note:** Version bump only for package @loopback/docs
+
+
+
+
+
+# [1.17.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.16.1...@loopback/docs@1.17.0) (2019-05-09)
+
+
+### Features
+
+* **context:** add support for method interceptors ([293188d](https://github.com/strongloop/loopback-next/commit/293188d))
+
+
+
+
+
+## [1.16.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.16.0...@loopback/docs@1.16.1) (2019-05-06)
+
+
+### Bug Fixes
+
+* **docs:** update Service-static-files.md to fix a typo ([1d35a68](https://github.com/strongloop/loopback-next/commit/1d35a68))
+* **example-todo-list:** add steps to run in sql db ([0122211](https://github.com/strongloop/loopback-next/commit/0122211))
+
+
+
+
+
+# [1.16.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.15.0...@loopback/docs@1.16.0) (2019-04-26)
+
+
+### Features
+
+* add booter-lb3app package ([993a97f](https://github.com/strongloop/loopback-next/commit/993a97f))
+
+
+
+
+
+# [1.15.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.14.0...@loopback/docs@1.15.0) (2019-04-20)
+
+
+### Bug Fixes
+
+* **docs:** fix sequence levels ([47350c3](https://github.com/strongloop/loopback-next/commit/47350c3))
+
+
+### Features
+
+* **context:** add `[@inject](https://github.com/inject).binding` and improve `[@inject](https://github.com/inject).setter` ([a396274](https://github.com/strongloop/loopback-next/commit/a396274))
+
+
+
+
+
+# [1.14.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.13.0...@loopback/docs@1.14.0) (2019-04-11)
+
+
+### Features
+
+* **cli:** add lb4 discover for model discovery ([35f719c](https://github.com/strongloop/loopback-next/commit/35f719c))
+
+
+
+
+
+# [1.13.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.12.0...@loopback/docs@1.13.0) (2019-04-09)
+
+
+### Features
+
+* **core:** introduce life cycle support ([27c8127](https://github.com/strongloop/loopback-next/commit/27c8127))
+
+
+
+
+
+# [1.12.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.11.1...@loopback/docs@1.12.0) (2019-04-05)
+
+
+### Bug Fixes
+
+* **docs:** move binding scope diagram to the correct folder ([0151a3d](https://github.com/strongloop/loopback-next/commit/0151a3d))
+
+
+### Features
+
+* add greeter-extension example ([9b09298](https://github.com/strongloop/loopback-next/commit/9b09298))
+* **context:** add binding.toAlias() to resolve values from another binding ([15dcd16](https://github.com/strongloop/loopback-next/commit/15dcd16))
+* **rest:** add mountExpressRouter ([be21cde](https://github.com/strongloop/loopback-next/commit/be21cde))
+
+
+
+
+
+## [1.11.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.11.0...@loopback/docs@1.11.1) (2019-03-22)
+
+**Note:** Version bump only for package @loopback/docs
+
+
+
+
+
+# [1.11.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.10.0...@loopback/docs@1.11.0) (2019-03-22)
+
+
+### Bug Fixes
+
+* **docs:** add missing backtick to table ([2797153](https://github.com/strongloop/loopback-next/commit/2797153))
+* **docs:** add steps to call SOAP services ([66da58c](https://github.com/strongloop/loopback-next/commit/66da58c))
+* **docs:** change relative paths to absolute ([af92d42](https://github.com/strongloop/loopback-next/commit/af92d42))
+
+
+### Features
+
+* **context:** honor binding scope from [@bind](https://github.com/bind) ([3b30f01](https://github.com/strongloop/loopback-next/commit/3b30f01))
+* **context:** tidy up context for resolving injections of a singleton binding ([f5bf43c](https://github.com/strongloop/loopback-next/commit/f5bf43c))
+
+
+
+
+
+# [1.10.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.9.1...@loopback/docs@1.10.0) (2019-03-12)
+
+
+### Bug Fixes
+
+* **example-express-composition:** use rest options ([7e22757](https://github.com/strongloop/loopback-next/commit/7e22757))
+
+
+### Features
+
+* **context:** add [@inject](https://github.com/inject).view and extend [@inject](https://github.com/inject) for multiple bindings ([d64268b](https://github.com/strongloop/loopback-next/commit/d64268b))
+* **context:** add events to ContextView ([fb10efc](https://github.com/strongloop/loopback-next/commit/fb10efc))
+* **rest:** add strict option for routers ([c3c5dab](https://github.com/strongloop/loopback-next/commit/c3c5dab))
+* **rest:** add support for redirect routes ([53bce7f](https://github.com/strongloop/loopback-next/commit/53bce7f))
+
+
+
+
+
+## [1.9.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.9.0...@loopback/docs@1.9.1) (2019-03-01)
+
+
+### Bug Fixes
+
+* **example-express-composition:** remove prepublishOnly and lbApp.start() ([c095a6c](https://github.com/strongloop/loopback-next/commit/c095a6c))
+
+
+
+
+
+# [1.9.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.8.0...@loopback/docs@1.9.0) (2019-03-01)
+
+
+### Bug Fixes
+
+* **docs:** add missing backtick for todo tutorial table ([e3dd42d](https://github.com/strongloop/loopback-next/commit/e3dd42d))
+* **example-soap-calculator:** switch to a new soap calculator webservice ([4cee896](https://github.com/strongloop/loopback-next/commit/4cee896))
+
+
+### Features
+
+* **rest:** allow express settings to be customized ([962f1cb](https://github.com/strongloop/loopback-next/commit/962f1cb))
+* add express example ([dd2400e](https://github.com/strongloop/loopback-next/commit/dd2400e))
+
+
+
+
+
+# [1.8.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.7.3...@loopback/docs@1.8.0) (2019-02-25)
+
+
+### Bug Fixes
+
+* **docs:** broken link in Crafting in LB ([7707fa5](https://github.com/strongloop/loopback-next/commit/7707fa5))
+* **docs:** grammar fix on todo-tutorial-datasource.md ([ca88a41](https://github.com/strongloop/loopback-next/commit/ca88a41))
+* **docs:** remove review questions section for Controller page ([93f7bbf](https://github.com/strongloop/loopback-next/commit/93f7bbf))
+
+
+### Features
+
+* **cli:** add `--docker` option to generate docker files ([4cd2442](https://github.com/strongloop/loopback-next/commit/4cd2442))
+* **context:** introduce async context observers for bind/unbind events ([e5e5fc4](https://github.com/strongloop/loopback-next/commit/e5e5fc4))
+* **rest:** add `disabled` option for OpenAPI spec endpoints ([af5b16a](https://github.com/strongloop/loopback-next/commit/af5b16a))
+* **rest:** introduce requestBodyParser options in RestServerOptions ([c7f59ba](https://github.com/strongloop/loopback-next/commit/c7f59ba))
+
+
+
+
+
+## [1.7.3](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.7.2...@loopback/docs@1.7.3) (2019-02-08)
+
+
+### Bug Fixes
+
+* **docs:** remove .ts from imports ([c601c4c](https://github.com/strongloop/loopback-next/commit/c601c4c))
+* **docs:** update link in todo-tutorial-geocoding-service ([e6a8d73](https://github.com/strongloop/loopback-next/commit/e6a8d73))
+* **docs:** update test paths to `src/__tests__` ([75731f9](https://github.com/strongloop/loopback-next/commit/75731f9))
+
+
+
+
+
+## [1.7.2](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.7.1...@loopback/docs@1.7.2) (2019-01-28)
+
+**Note:** Version bump only for package @loopback/docs
+
+
+
+
+
+## [1.7.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.7.0...@loopback/docs@1.7.1) (2019-01-15)
+
+**Note:** Version bump only for package @loopback/docs
+
+
+
+
+
+# [1.7.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.6.0...@loopback/docs@1.7.0) (2019-01-14)
+
+
+### Bug Fixes
+
+* **cli:** add descriptions to features ([8a94f8f](https://github.com/strongloop/loopback-next/commit/8a94f8f))
+* **docs:** fix a typo ([c2f8cdd](https://github.com/strongloop/loopback-next/commit/c2f8cdd))
+* **docs:** fix example for using --config option ([5a670ef](https://github.com/strongloop/loopback-next/commit/5a670ef))
+
+
+### Features
+
+* always include tslint and typescript in project dev-dependencies ([e0df285](https://github.com/strongloop/loopback-next/commit/e0df285))
+* **cli:** add strict prompt to model generator ([a68d78b](https://github.com/strongloop/loopback-next/commit/a68d78b))
+
+
+
+
+
+# [1.6.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.5.0...@loopback/docs@1.6.0) (2018-12-20)
+
+
+### Features
+
+* **context:** add `[@bind](https://github.com/bind)` to decorate classes with more information ([b8f9792](https://github.com/strongloop/loopback-next/commit/b8f9792))
+
+
+
+
+
+# [1.5.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.4.0...@loopback/docs@1.5.0) (2018-12-13)
+
+
+### Bug Fixes
+
+* add model/entity descriptions ([8156f9d](https://github.com/strongloop/loopback-next/commit/8156f9d))
+
+
+### Features
+
+* scaffold DB migration script for new app projects ([f783f07](https://github.com/strongloop/loopback-next/commit/f783f07))
+* **cli:** allow annonymous schemas in openapi to be mapped to models ([eedec1e](https://github.com/strongloop/loopback-next/commit/eedec1e))
+* **repository:** migrateSchema APIs ([ad0229b](https://github.com/strongloop/loopback-next/commit/ad0229b))
+* **rest:** allow basePath for rest servers ([1016a09](https://github.com/strongloop/loopback-next/commit/1016a09))
+
+
+
+
+
+# [1.4.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.3.1...@loopback/docs@1.4.0) (2018-11-26)
+
+
+### Bug Fixes
+
+* **docs:** create a new page for HOWTOs sidebar section ([164e125](https://github.com/strongloop/loopback-next/commit/164e125))
+
+
+### Features
+
+* **rest:** allow body parsers to be extended ([86bfcbc](https://github.com/strongloop/loopback-next/commit/86bfcbc))
+
+
+
+
+
+## [1.3.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.3.0...@loopback/docs@1.3.1) (2018-11-17)
+
+**Note:** Version bump only for package @loopback/docs
+
+
+
+
+
+# [1.3.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.2.0...@loopback/docs@1.3.0) (2018-11-17)
+
+
+### Features
+
+* an extension adding a self-hosted REST API Explorer ([4c165c7](https://github.com/strongloop/loopback-next/commit/4c165c7))
+
+
+
+
+
+# [1.2.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.1.0...@loopback/docs@1.2.0) (2018-11-14)
+
+
+### Features
+
+* **core:** allow components to expose an array of bindings ([eae0da3](https://github.com/strongloop/loopback-next/commit/eae0da3))
+* **rest:** add config option to disable API Explorer redirects ([b4d9bc5](https://github.com/strongloop/loopback-next/commit/b4d9bc5))
+
+
+
+
+
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.0.1...@loopback/docs@1.1.0) (2018-11-08)
+
+
+### Bug Fixes
+
+* change invalid reference link to valid link ([b27cc2d](https://github.com/strongloop/loopback-next/commit/b27cc2d))
+* **docs:** use correct params and imports ([2e099eb](https://github.com/strongloop/loopback-next/commit/2e099eb))
+* **openapi-v3:** generate schemas for x-ts-type ([07f0d6c](https://github.com/strongloop/loopback-next/commit/07f0d6c))
+* update usage of `x-ts-type` for schemas ([57c694e](https://github.com/strongloop/loopback-next/commit/57c694e))
+* **repository:** build relations based on their names ([2046701](https://github.com/strongloop/loopback-next/commit/2046701))
+
+
+### Features
+
+* **rest:** add support for form request body ([2d9e0a8](https://github.com/strongloop/loopback-next/commit/2d9e0a8))
+
+
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/strongloop/loopback-next/compare/@loopback/docs@1.0.0...@loopback/docs@1.0.1) (2018-10-17)
 
@@ -344,7 +956,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 has been renamed to ForeignKeyType and switched with Target generic.
 Also, the function createHasManyRepositoryFactory also renames the same
 generic and makes it the last declared generic. Lastly, the generic
-ForeignKeyType is added to DefaultCrudRepository#_createHasManyRepository
+ForeignKeyType is added to DefaultCrudRepository#createHasManyRepository
 FactoryFor function. Assuming there is an Order and Customer model defined,
 see the following examples for upgrade instructions:
 

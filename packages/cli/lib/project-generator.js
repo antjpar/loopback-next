@@ -1,11 +1,15 @@
-// Copyright IBM Corp. 2017. All Rights Reserved.
+// Copyright IBM Corp. 2017,2019. All Rights Reserved.
 // Node module: @loopback/cli
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
+
 const BaseGenerator = require('./base-generator');
 const utils = require('./utils');
+const chalk = require('chalk');
+const cliVersion = require('../package.json').version;
+const path = require('path');
 
 module.exports = class ProjectGenerator extends BaseGenerator {
   // Note: arguments and options should be defined in the constructor.
@@ -15,11 +19,23 @@ module.exports = class ProjectGenerator extends BaseGenerator {
     // This list gets shown to users to let them select the appropriate
     // build settings for their project.
     this.buildOptions = [
-      'tslint',
-      'prettier',
-      'mocha',
-      'loopbackBuild',
-      'vscode',
+      {
+        name: 'eslint',
+        description: 'add a linter with pre-configured lint rules',
+      },
+      {
+        name: 'prettier',
+        description: 'install prettier to format code conforming to rules',
+      },
+      {
+        name: 'mocha',
+        description: 'install mocha to run tests',
+      },
+      {
+        name: 'loopbackBuild',
+        description: 'use @loopback/build helpers (e.g. lb-eslint)',
+      },
+      {name: 'vscode', description: 'add VSCode config files'},
     ];
   }
 
@@ -40,9 +56,9 @@ module.exports = class ProjectGenerator extends BaseGenerator {
       description: 'Project root directory for the ' + this.projectType,
     });
 
-    this.option('tslint', {
+    this.option('eslint', {
       type: Boolean,
-      description: 'Enable tslint',
+      description: 'Enable eslint',
     });
 
     this.option('prettier', {
@@ -101,6 +117,9 @@ module.exports = class ProjectGenerator extends BaseGenerator {
       this.buildOptions,
     );
     this.projectOptions.forEach(n => {
+      if (typeof n === 'object') {
+        n = n.name;
+      }
       if (this.options[n]) {
         this.projectInfo[n] = this.options[n];
       }
@@ -115,7 +134,8 @@ module.exports = class ProjectGenerator extends BaseGenerator {
         name: 'name',
         message: 'Project name:',
         when: this.projectInfo.name == null,
-        default: this.options.name || this.appname,
+        default:
+          this.options.name || utils.toFileName(path.basename(process.cwd())),
         validate: utils.validate,
       },
       {
@@ -144,13 +164,12 @@ module.exports = class ProjectGenerator extends BaseGenerator {
           // prompts if option was set to a directory that already exists
           utils.validateNotExisting(this.projectInfo.outdir) !== true,
         validate: utils.validateNotExisting,
-        default: utils.kebabCase(this.projectInfo.name),
+        default: utils.toFileName(this.projectInfo.name),
       },
     ];
 
     return this.prompt(prompts).then(props => {
       Object.assign(this.projectInfo, props);
-      this.destinationRoot(this.projectInfo.outdir);
     });
   }
 
@@ -158,12 +177,15 @@ module.exports = class ProjectGenerator extends BaseGenerator {
     if (this.shouldExit()) return false;
     const choices = [];
     this.buildOptions.forEach(f => {
-      if (!this.options[f]) {
+      if (this.options[f.name] == null) {
         choices.push({
-          name: 'Enable ' + f,
-          key: f,
+          name: `Enable ${f.name}: ${chalk.gray(f.description)}`,
+          key: f.name,
+          short: `Enable ${f.name}`,
           checked: true,
         });
+      } else {
+        this.projectInfo[f.name] = this.options[f.name];
       }
     });
     const prompts = [
@@ -177,11 +199,12 @@ module.exports = class ProjectGenerator extends BaseGenerator {
       },
     ];
     return this.prompt(prompts).then(props => {
-      const settings = props.settings || choices.map(c => c.name);
+      const settings = props.settings || choices.map(c => c.short);
       const features = choices.map(c => {
         return {
           key: c.key,
-          value: settings.indexOf(c.name) !== -1,
+          value:
+            settings.indexOf(c.name) !== -1 || settings.indexOf(c.short) !== -1,
         };
       });
       features.forEach(f => (this.projectInfo[f.key] = f.value));
@@ -191,15 +214,18 @@ module.exports = class ProjectGenerator extends BaseGenerator {
   scaffold() {
     if (this.shouldExit()) return false;
 
+    this.destinationRoot(this.projectInfo.outdir);
+
+    // Store original cli version in .yo.rc.json
+    this.config.set('version', cliVersion);
+
     // First copy common files from ../../project/templates
-    this.fs.copyTpl(
+    this.copyTemplatedFiles(
       this.templatePath('../../project/templates/**/*'),
       this.destinationPath(''),
       {
         project: this.projectInfo,
       },
-      {},
-      {globOptions: {dot: true}},
     );
 
     // Rename `_.gitignore` back to `.gitignore`.
@@ -211,18 +237,17 @@ module.exports = class ProjectGenerator extends BaseGenerator {
     );
 
     // Copy project type specific files from ./templates
-    this.fs.copyTpl(
+    this.copyTemplatedFiles(
       this.templatePath('**/*'),
       this.destinationPath(''),
       {
         project: this.projectInfo,
       },
-      {},
-      {globOptions: {dot: true}},
     );
 
-    if (!this.projectInfo.tslint) {
-      this.fs.delete(this.destinationPath('tslint.*json.ejs'));
+    if (!this.projectInfo.eslint) {
+      this.fs.delete(this.destinationPath('.eslintrc.*.ejs'));
+      this.fs.delete(this.destinationPath('.eslintignore'));
     }
 
     if (!this.projectInfo.prettier) {
@@ -239,7 +264,7 @@ module.exports = class ProjectGenerator extends BaseGenerator {
     }
 
     if (!this.projectInfo.mocha) {
-      this.fs.delete(this.destinationPath('test/mocha.opts'));
+      this.fs.delete(this.destinationPath('.mocharc.json'));
     }
 
     if (!this.projectInfo.vscode) {

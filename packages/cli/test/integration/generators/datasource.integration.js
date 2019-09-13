@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/cli
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -13,8 +13,6 @@ const testlab = require('@loopback/testlab');
 const expect = testlab.expect;
 const TestSandbox = testlab.TestSandbox;
 
-const debug = require('../../../lib/debug')('lb4:datasource:test');
-const DataSourceGenerator = require('../../../generators/datasource');
 const generator = path.join(__dirname, '../../../generators/datasource');
 const tests = require('../lib/artifact-generator')(generator);
 const baseTests = require('../lib/base-generator')(generator);
@@ -88,15 +86,15 @@ describe('lb4 datasource integration', () => {
     ).to.be.rejectedWith(/No package.json found in/);
   });
 
-  it('does not run without the loopback keyword', () => {
+  it('does not run without the "@loopback/core" dependency', () => {
     return expect(
       testUtils
         .executeGenerator(generator)
         .inDir(SANDBOX_PATH, () =>
-          testUtils.givenLBProject(SANDBOX_PATH, {excludeKeyword: true}),
+          testUtils.givenLBProject(SANDBOX_PATH, {excludeLoopbackCore: true}),
         )
         .withPrompts(basicCLIInput),
-    ).to.be.rejectedWith(/No `loopback` keyword found in/);
+    ).to.be.rejectedWith(/No `@loopback\/core` package found/);
   });
 
   describe('basic datasource', () => {
@@ -159,8 +157,26 @@ function checkBasicDataSourceFiles() {
   assert.file(expectedTSFile);
   assert.file(expectedJSONFile);
   assert.file(expectedIndexFile);
+  assert.noFile(path.join(SANDBOX_PATH, 'node_modules/memory'));
 
-  assert.fileContent(expectedTSFile, /import {inject} from '@loopback\/core';/);
+  /*
+  import {
+    inject,
+    lifeCycleObserver,
+    LifeCycleObserver,
+    ValueOrPromise,
+  } from '@loopback/core';
+  */
+  assert.fileContent(
+    expectedTSFile,
+    `import {
+  inject,
+  lifeCycleObserver,
+  LifeCycleObserver,
+  ValueOrPromise,
+} from '@loopback/core';`,
+  );
+
   assert.fileContent(
     expectedTSFile,
     /import {juggler} from '@loopback\/repository';/,
@@ -169,10 +185,12 @@ function checkBasicDataSourceFiles() {
     expectedTSFile,
     /import \* as config from '.\/ds.datasource.json';/,
   );
+  assert.fileContent(expectedTSFile, /@lifeCycleObserver\('datasource'\)/);
   assert.fileContent(
     expectedTSFile,
-    /export class DsDataSource extends juggler.DataSource {/,
+    /export class DsDataSource extends juggler.DataSource/,
   );
+  assert.fileContent(expectedTSFile, /implements LifeCycleObserver {/);
   assert.fileContent(expectedTSFile, /static dataSourceName = 'ds';/);
   assert.fileContent(expectedTSFile, /constructor\(/);
   assert.fileContent(
@@ -181,6 +199,7 @@ function checkBasicDataSourceFiles() {
   );
   assert.fileContent(expectedTSFile, /\) \{/);
   assert.fileContent(expectedTSFile, /super\(dsConfig\);/);
+  assert.fileContent(expectedTSFile, /stop\(\)\: ValueOrPromise<void>/);
 
   assert.fileContent(expectedIndexFile, /export \* from '.\/ds.datasource';/);
 }

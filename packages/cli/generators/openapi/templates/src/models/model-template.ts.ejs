@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 <%_
 const _properties = locals.properties || [];
 if (_properties.length) {
@@ -19,7 +20,7 @@ imports.forEach(i => {
 
 /**
  * The model class is generated from OpenAPI schema - <%- name %>
- * <%- description %>
+ * <%- escapeComment(description) %>
  */
 @model({name: '<%- name %>'})
 export class <%- className %> {
@@ -31,7 +32,7 @@ export class <%- className %> {
 
   <%_ for (const p of _properties) { -%>
   /**
-   * <%- p.description || '' %>
+   * <%- escapeComment(p.description) %>
    */
   <%- p.decoration %>
   <%- p.signature %>

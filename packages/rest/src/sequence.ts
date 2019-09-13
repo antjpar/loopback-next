@@ -1,13 +1,13 @@
-// Copyright IBM Corp. 2017. All Rights Reserved.
+// Copyright IBM Corp. 2017,2018. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
 const debug = require('debug')('loopback:rest:sequence');
 import {inject} from '@loopback/context';
-import {FindRoute, InvokeMethod, Send, Reject, ParseParams} from './types';
 import {RestBindings} from './keys';
 import {RequestContext} from './request-context';
+import {FindRoute, InvokeMethod, ParseParams, Reject, Send} from './types';
 
 const SequenceActions = RestBindings.SequenceActions;
 
@@ -28,7 +28,7 @@ export interface SequenceHandler {
   /**
    * Handle the request by running the configured sequence of actions.
    *
-   * @param context The request context: HTTP request and response objects,
+   * @param context - The request context: HTTP request and response objects,
    * per-request IoC container and more.
    */
   handle(context: RequestContext): Promise<void>;
@@ -37,6 +37,7 @@ export interface SequenceHandler {
 /**
  * The default implementation of SequenceHandler.
  *
+ * @remarks
  * This class implements default Sequence for the LoopBack framework.
  * Default sequence is used if user hasn't defined their own Sequence
  * for their application.
@@ -45,6 +46,7 @@ export interface SequenceHandler {
  * when the API request comes in. User defines APIs in their Application
  * Controller class.
  *
+ * @example
  * User can bind their own Sequence to app as shown below
  * ```ts
  * app.bind(CoreBindings.SEQUENCE).toClass(MySequence);
@@ -55,15 +57,15 @@ export class DefaultSequence implements SequenceHandler {
    * Constructor: Injects findRoute, invokeMethod & logError
    * methods as promises.
    *
-   * @param {FindRoute} findRoute Finds the appropriate controller method,
+   * @param findRoute - Finds the appropriate controller method,
    *  spec and args for invocation (injected via SequenceActions.FIND_ROUTE).
-   * @param {ParseParams} parseParams The parameter parsing function (injected
+   * @param parseParams - The parameter parsing function (injected
    * via SequenceActions.PARSE_PARAMS).
-   * @param {InvokeMethod} invoke Invokes the method specified by the route
+   * @param invoke - Invokes the method specified by the route
    * (injected via SequenceActions.INVOKE_METHOD).
-   * @param {Send} send The action to merge the invoke result with the response
+   * @param send - The action to merge the invoke result with the response
    * (injected via SequenceActions.SEND)
-   * @param {Reject} reject The action to take if the invoke returns a rejected
+   * @param reject - The action to take if the invoke returns a rejected
    * promise result (injected via SequenceActions.REJECT).
    */
   constructor(
@@ -87,7 +89,7 @@ export class DefaultSequence implements SequenceHandler {
    *  - Error is caught and logged using 'logError' if any of the above steps
    *    in the sequence fails with an error.
    *
-   * @param context The request context: HTTP request and response objects,
+   * @param context - The request context: HTTP request and response objects,
    * per-request IoC container and more.
    */
   async handle(context: RequestContext): Promise<void> {

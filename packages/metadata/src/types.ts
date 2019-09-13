@@ -1,7 +1,7 @@
-// Copyright IBM Corp. 2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/metadata
 // This file is licensed under the MIT License.
-// License text available at https://opensource.org/licenses/MIT'
+// License text available at https://opensource.org/licenses/MIT
 
 /**
  * Decorator function types
@@ -14,8 +14,8 @@ export type DecoratorType =
 
 /**
  * A strongly-typed metadata accessor via reflection
- * @typeparam T Type of the metadata value
- * @typeparam D Type of the decorator
+ * @typeParam T - Type of the metadata value
+ * @typeParam D - Type of the decorator
  */
 export class MetadataAccessor<T, D extends DecoratorType = DecoratorType> {
   private constructor(public readonly key: string) {}
@@ -26,9 +26,9 @@ export class MetadataAccessor<T, D extends DecoratorType = DecoratorType> {
 
   /**
    * Create a strongly-typed metadata accessor
-   * @param key The metadata key
-   * @typeparam T Type of the metadata value
-   * @typeparam D Type of the decorator
+   * @param key - The metadata key
+   * @typeParam T - Type of the metadata value
+   * @typeParam D - Type of the decorator
    */
   static create<T, D extends DecoratorType>(key: string) {
     return new MetadataAccessor<T, D>(key);
@@ -37,8 +37,8 @@ export class MetadataAccessor<T, D extends DecoratorType = DecoratorType> {
 
 /**
  * Key for metadata access via reflection
- * @typeparam T Type of the metadata value
- * @typeparam D Type of the decorator
+ * @typeParam T - Type of the metadata value
+ * @typeParam D - Type of the decorator
  */
 export type MetadataKey<T, D extends DecoratorType> =
   | MetadataAccessor<T, D>

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/example-todo-list
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -14,6 +14,7 @@ import {
   del,
   get,
   getFilterSchemaFor,
+  getModelSchemaRef,
   getWhereSchemaFor,
   param,
   patch,
@@ -33,12 +34,21 @@ export class TodoListController {
     responses: {
       '200': {
         description: 'TodoList model instance',
-        content: {'application/json': {'x-ts-type': TodoList}},
+        content: {'application/json': {schema: getModelSchemaRef(TodoList)}},
       },
     },
   })
-  async create(@requestBody() obj: TodoList): Promise<TodoList> {
-    return await this.todoListRepository.create(obj);
+  async create(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(TodoList, {exclude: ['id']}),
+        },
+      },
+    })
+    todoList: Omit<TodoList, 'id'>,
+  ): Promise<TodoList> {
+    return this.todoListRepository.create(todoList);
   }
 
   @get('/todo-lists/count', {
@@ -50,23 +60,32 @@ export class TodoListController {
     },
   })
   async count(
-    @param.query.object('where', getWhereSchemaFor(TodoList)) where?: Where,
+    @param.query.object('where', getWhereSchemaFor(TodoList))
+    where?: Where<TodoList>,
   ): Promise<Count> {
-    return await this.todoListRepository.count(where);
+    return this.todoListRepository.count(where);
   }
 
   @get('/todo-lists', {
     responses: {
       '200': {
         description: 'Array of TodoList model instances',
-        content: {'application/json': {'x-ts-type': TodoList}},
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(TodoList, {includeRelations: true}),
+            },
+          },
+        },
       },
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(TodoList)) filter?: Filter,
+    @param.query.object('filter', getFilterSchemaFor(TodoList))
+    filter?: Filter<TodoList>,
   ): Promise<TodoList[]> {
-    return await this.todoListRepository.find(filter);
+    return this.todoListRepository.find(filter);
   }
 
   @patch('/todo-lists', {
@@ -78,22 +97,38 @@ export class TodoListController {
     },
   })
   async updateAll(
-    @requestBody() obj: Partial<TodoList>,
-    @param.query.object('where', getWhereSchemaFor(TodoList)) where?: Where,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(TodoList, {partial: true}),
+        },
+      },
+    })
+    todoList: Partial<TodoList>,
+    @param.query.object('where', getWhereSchemaFor(TodoList))
+    where?: Where<TodoList>,
   ): Promise<Count> {
-    return await this.todoListRepository.updateAll(obj, where);
+    return this.todoListRepository.updateAll(todoList, where);
   }
 
   @get('/todo-lists/{id}', {
     responses: {
       '200': {
         description: 'TodoList model instance',
-        content: {'application/json': {'x-ts-type': TodoList}},
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(TodoList, {includeRelations: true}),
+          },
+        },
       },
     },
   })
-  async findById(@param.path.number('id') id: number): Promise<TodoList> {
-    return await this.todoListRepository.findById(id);
+  async findById(
+    @param.path.number('id') id: number,
+    @param.query.object('filter', getFilterSchemaFor(TodoList))
+    filter?: Filter<TodoList>,
+  ): Promise<TodoList> {
+    return this.todoListRepository.findById(id, filter);
   }
 
   @patch('/todo-lists/{id}', {
@@ -105,9 +140,16 @@ export class TodoListController {
   })
   async updateById(
     @param.path.number('id') id: number,
-    @requestBody() obj: TodoList,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(TodoList, {partial: true}),
+        },
+      },
+    })
+    todoList: Partial<TodoList>,
   ): Promise<void> {
-    await this.todoListRepository.updateById(id, obj);
+    await this.todoListRepository.updateById(id, todoList);
   }
 
   @del('/todo-lists/{id}', {

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/example-rpc-server
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -47,7 +47,7 @@ export type Controller = {
 
 function sendErrResponse(
   resp: express.Response,
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   send: any,
   statusCode: number,
 ) {

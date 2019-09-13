@@ -3,16 +3,18 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {Bootstrapper} from './bootstrapper';
-import {Component, Application, CoreBindings} from '@loopback/core';
-import {inject, BindingScope} from '@loopback/context';
+import {BindingScope, inject} from '@loopback/context';
+import {Application, Component, CoreBindings} from '@loopback/core';
 import {
-  ControllerBooter,
-  RepositoryBooter,
-  DataSourceBooter,
-  ServiceBooter,
   ApplicationMetadataBooter,
+  ControllerBooter,
+  DataSourceBooter,
+  InterceptorProviderBooter,
+  LifeCycleObserverBooter,
+  RepositoryBooter,
+  ServiceBooter,
 } from './booters';
+import {Bootstrapper} from './bootstrapper';
 import {BootBindings} from './keys';
 
 /**
@@ -29,11 +31,13 @@ export class BootComponent implements Component {
     RepositoryBooter,
     ServiceBooter,
     DataSourceBooter,
+    LifeCycleObserverBooter,
+    InterceptorProviderBooter,
   ];
 
   /**
    *
-   * @param app Application instance
+   * @param app - Application instance
    */
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) app: Application) {
     // Bound as a SINGLETON so it can be cached as it has no state

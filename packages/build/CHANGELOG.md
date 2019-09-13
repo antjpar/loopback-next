@@ -3,9 +3,347 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.0.0](https://github.com/strongloop/loopback-next/compare/@loopback/build@0.8.0...@loopback/build@1.0.0) (2018-10-10)
+## [2.0.10](https://github.com/strongloop/loopback-next/compare/@loopback/build@2.0.9...@loopback/build@2.0.10) (2019-09-06)
 
 **Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [2.0.9](https://github.com/strongloop/loopback-next/compare/@loopback/build@2.0.8...@loopback/build@2.0.9) (2019-09-03)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [2.0.8](https://github.com/strongloop/loopback-next/compare/@loopback/build@2.0.7...@loopback/build@2.0.8) (2019-08-19)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [2.0.7](https://github.com/strongloop/loopback-next/compare/@loopback/build@2.0.6...@loopback/build@2.0.7) (2019-08-15)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [2.0.6](https://github.com/strongloop/loopback-next/compare/@loopback/build@2.0.5...@loopback/build@2.0.6) (2019-07-31)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [2.0.5](https://github.com/strongloop/loopback-next/compare/@loopback/build@2.0.4...@loopback/build@2.0.5) (2019-07-26)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [2.0.4](https://github.com/strongloop/loopback-next/compare/@loopback/build@2.0.3...@loopback/build@2.0.4) (2019-07-17)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [2.0.3](https://github.com/strongloop/loopback-next/compare/@loopback/build@2.0.2...@loopback/build@2.0.3) (2019-06-28)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [2.0.2](https://github.com/strongloop/loopback-next/compare/@loopback/build@2.0.1...@loopback/build@2.0.2) (2019-06-21)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [2.0.1](https://github.com/strongloop/loopback-next/compare/@loopback/build@2.0.0...@loopback/build@2.0.1) (2019-06-20)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+# [2.0.0](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.7.1...@loopback/build@2.0.0) (2019-06-17)
+
+
+### Bug Fixes
+
+* **build:** remove `lb-tslint` from README ([be89eb6](https://github.com/strongloop/loopback-next/commit/be89eb6))
+
+
+### Features
+
+* **build:** add support for dryRun to `--copy-resources` ([f8f078f](https://github.com/strongloop/loopback-next/commit/f8f078f))
+* **build:** enable incremental compilation ([2120712](https://github.com/strongloop/loopback-next/commit/2120712))
+* **build:** read outDir from tsconfig when copying resources ([4f947a3](https://github.com/strongloop/loopback-next/commit/4f947a3))
+* **build:** remove lb-tslint ([e9e4bba](https://github.com/strongloop/loopback-next/commit/e9e4bba))
+* **build:** remove strong-docs based `lb-apidocs` helper ([871457e](https://github.com/strongloop/loopback-next/commit/871457e))
+* **build:** remove support for multi-dist compilation ([f6fcfe7](https://github.com/strongloop/loopback-next/commit/f6fcfe7))
+
+
+### BREAKING CHANGES
+
+* **build:** We are no longer choosing outDir for you, you have to
+specify it explicitly. It is no longer possible to specify compilation target
+via non-option argument like `lb-tsc es2017`.
+
+    Migration guide:
+
+    - Modify your `tsconfig.json` file and configure `dist` via `compilerOptions.outDir`
+
+    - If you are using target different from `es2017`, then configure it via
+  `compilerOptions.target`.
+
+    - Remove `es2017` and `--outDir dist` from lb-tsc arguments.
+
+    - Ensure that the output directory is listed in `lb-clean` arguments,
+      e.g. call `lb-clean dist`.
+
+    - When calling `lb-mocha`, replace `DIST` with the actual outDir value,
+      typically `dist`.
+
+* **build:** `lb-apidocs` helper is no longer available. Please switch
+to Microsoft api-extractor and api-documenter.
+* **build:** `lb-tslint` helper is no longer available. Please
+install `tslint` directly as a dependency and invoke `tslint` instead
+of `lb-tslint`.
+
+    Alternatively, you can migrate from tslint to eslint and use the
+    recently introduced helper `lb-eslint`.
+
+## [1.7.1](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.7.0...@loopback/build@1.7.1) (2019-06-06)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+# [1.7.0](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.6.1...@loopback/build@1.7.0) (2019-06-03)
+
+
+### Features
+
+* replace tslint with eslint ([44185a7](https://github.com/strongloop/loopback-next/commit/44185a7))
+
+
+
+
+
+## [1.6.1](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.6.0...@loopback/build@1.6.1) (2019-05-31)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+# [1.6.0](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.5.5...@loopback/build@1.6.0) (2019-05-30)
+
+
+### Features
+
+* **build:** add eslint scripts and default configs ([a6abe86](https://github.com/strongloop/loopback-next/commit/a6abe86))
+* **tsdocs:** add integration with api-extractor/documenter ([c8d9572](https://github.com/strongloop/loopback-next/commit/c8d9572))
+
+
+
+
+
+## [1.5.5](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.5.4...@loopback/build@1.5.5) (2019-05-23)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [1.5.4](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.5.3...@loopback/build@1.5.4) (2019-05-14)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [1.5.3](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.5.2...@loopback/build@1.5.3) (2019-05-10)
+
+
+### Bug Fixes
+
+* **build:** honor tsconfig compilerOptions.rootDir to copy resources ([8a8857d](https://github.com/strongloop/loopback-next/commit/8a8857d))
+
+
+
+
+
+## [1.5.2](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.5.1...@loopback/build@1.5.2) (2019-05-09)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [1.5.1](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.5.0...@loopback/build@1.5.1) (2019-05-06)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+# [1.5.0](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.4.3...@loopback/build@1.5.0) (2019-04-20)
+
+
+### Features
+
+* **build:** add more TypeScript "strict" checks ([866aa2f](https://github.com/strongloop/loopback-next/commit/866aa2f))
+
+
+
+
+
+## [1.4.3](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.4.2...@loopback/build@1.4.3) (2019-04-11)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [1.4.2](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.4.1...@loopback/build@1.4.2) (2019-04-09)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [1.4.1](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.4.0...@loopback/build@1.4.1) (2019-04-05)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+# [1.4.0](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.3.2...@loopback/build@1.4.0) (2019-03-22)
+
+
+### Bug Fixes
+
+* **build:** remove "dom" from the list of global libraries ([781cd1d](https://github.com/strongloop/loopback-next/commit/781cd1d))
+
+
+### Features
+
+* **build:** enable TSC option "skipLibCheck" ([66bb506](https://github.com/strongloop/loopback-next/commit/66bb506))
+
+
+
+
+
+## [1.3.2](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.3.1...@loopback/build@1.3.2) (2019-03-12)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+## [1.3.1](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.3.0...@loopback/build@1.3.1) (2019-02-25)
+
+
+### Bug Fixes
+
+* update version of nyc ([f8db27c](https://github.com/strongloop/loopback-next/commit/f8db27c))
+
+
+
+
+
+# [1.3.0](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.2.1...@loopback/build@1.3.0) (2019-02-08)
+
+
+### Features
+
+* **build:** use `dist/__tests__` in code examples and tests ([a3da024](https://github.com/strongloop/loopback-next/commit/a3da024))
+
+
+
+
+
+## [1.2.1](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.2.0...@loopback/build@1.2.1) (2019-01-28)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+# [1.2.0](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.1.0...@loopback/build@1.2.0) (2019-01-14)
+
+
+### Bug Fixes
+
+* **build:** fix path lookup in build helpers ([16311c5](https://github.com/strongloop/loopback-next/commit/16311c5))
+
+
+### Features
+
+* always include tslint and typescript in project dev-dependencies ([e0df285](https://github.com/strongloop/loopback-next/commit/e0df285))
+
+
+
+
+
+# [1.1.0](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.0.2...@loopback/build@1.1.0) (2018-12-20)
+
+
+### Features
+
+* move tslint config into a standalone package ([26f3543](https://github.com/strongloop/loopback-next/commit/26f3543))
+
+
+
+
+
+## [1.0.2](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.0.1...@loopback/build@1.0.2) (2018-12-13)
+
+**Note:** Version bump only for package @loopback/build
+
+
+
+
+
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/strongloop/loopback-next/compare/@loopback/build@1.0.0...@loopback/build@1.0.1) (2018-11-08)
+
+
+### Bug Fixes
+
+* **cli:** exclude json files from tslint ([bd9f864](https://github.com/strongloop/loopback-next/commit/bd9f864))
 
 
 

@@ -12,46 +12,6 @@ const spawn = require('cross-spawn');
 const debug = require('debug')('loopback:build');
 
 /**
- * Get the Node.js compilation target - es2015, es2017 or es2018
- */
-function getCompilationTarget() {
-  const nodeMajorVersion = +process.versions.node.split('.')[0];
-  return nodeMajorVersion >= 10
-    ? 'es2018'
-    : nodeMajorVersion >= 7
-      ? 'es2017'
-      : 'es2015';
-}
-
-/**
- * Get the distribution name
- * @param {*} target
- */
-function getDistribution(target) {
-  if (!target) {
-    target = getCompilationTarget();
-  }
-  var dist;
-  switch (target) {
-    case 'es2018':
-      dist = 'dist10';
-      break;
-    case 'es2017':
-      dist = 'dist8';
-      break;
-    case 'es2015':
-      dist = 'dist6';
-      break;
-    default:
-      console.error(
-        'Unknown build target %s. Supported values: es2015, es2017, es2018',
-      );
-      process.exit(1);
-  }
-  return dist;
-}
-
-/**
  * Get the root directory of this module
  */
 function getRootDir() {
@@ -71,8 +31,8 @@ function getPackageDir() {
  * @param {string} defaultName Default file
  */
 function getConfigFile(name, defaultName) {
-  var dir = getPackageDir();
-  var configFile = path.join(dir, name);
+  const dir = getPackageDir();
+  let configFile = path.join(dir, name);
   if (!fs.existsSync(configFile)) {
     debug('%s does not exist', configFile);
     if (defaultName) {
@@ -99,9 +59,9 @@ function getConfigFile(name, defaultName) {
  * @param {string} cli
  */
 function resolveCLI(cli) {
-  const path = './node_modules/' + cli;
+  const modulePath = './node_modules/' + cli;
   try {
-    return require.resolve(path.join(getPackageDir(), path));
+    return require.resolve(path.join(getPackageDir(), modulePath));
   } catch (e) {
     return require.resolve(cli);
   }
@@ -112,6 +72,7 @@ function resolveCLI(cli) {
  * @param {string} cli Path of the cli command
  * @param {string[]} args The arguments
  * @param {object} options Options to control dryRun and spawn
+ * - nodeArgs An array of args for `node`
  * - dryRun Controls if the cli will be executed or not. If set
  * to true, the command itself will be returned without running it
  */
@@ -125,7 +86,13 @@ function runCLI(cli, args, options) {
   if (options.dryRun) {
     return util.format('%s %s', process.execPath, args.join(' '));
   }
-  var child = spawn(
+  if (options.nodeArgs) {
+    debug('node args: %s', options.nodeArgs.join(' '));
+    // For example, [--no-warnings]
+    args = options.nodeArgs.concat(args);
+  }
+  debug('Spawn %s %s', process.execPath, args.join(' '));
+  const child = spawn(
     process.execPath, // Typically '/usr/local/bin/node'
     args,
     Object.assign(
@@ -160,7 +127,7 @@ function runShell(command, args, options) {
   if (options.dryRun) {
     return util.format('%s %s', command, args.join(' '));
   }
-  var child = spawn(
+  const child = spawn(
     command,
     args,
     Object.assign(
@@ -207,8 +174,20 @@ function isOptionSet(opts, ...optionNames) {
   );
 }
 
-exports.getCompilationTarget = getCompilationTarget;
-exports.getDistribution = getDistribution;
+function mochaConfiguredForProject() {
+  const configFiles = [
+    '.mocharc.js',
+    '.mocharc.json',
+    '.mocharc.yaml',
+    '.mocharc.yml',
+    'test/mocha.opts',
+  ];
+  return configFiles.some(f => {
+    const configFile = path.join(getPackageDir(), f);
+    return fs.existsSync(configFile);
+  });
+}
+
 exports.getRootDir = getRootDir;
 exports.getPackageDir = getPackageDir;
 exports.getConfigFile = getConfigFile;
@@ -216,3 +195,4 @@ exports.resolveCLI = resolveCLI;
 exports.runCLI = runCLI;
 exports.runShell = runShell;
 exports.isOptionSet = isOptionSet;
+exports.mochaConfiguredForProject = mochaConfiguredForProject;

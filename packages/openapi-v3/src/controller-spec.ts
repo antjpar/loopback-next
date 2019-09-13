@@ -1,26 +1,33 @@
-// Copyright IBM Corp. 2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/openapi-v3
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {MetadataInspector, DecoratorFactory} from '@loopback/context';
-
+import {DecoratorFactory, MetadataInspector} from '@loopback/context';
 import {
+  getJsonSchema,
+  getJsonSchemaRef,
+  JsonSchemaOptions,
+} from '@loopback/repository-json-schema';
+import * as _ from 'lodash';
+import {resolveSchema} from './generate-schema';
+import {jsonToSchemaObject, SchemaRef} from './json-to-schema';
+import {OAI3Keys} from './keys';
+import {
+  ComponentsObject,
+  ISpecificationExtension,
+  isReferenceObject,
   OperationObject,
   ParameterObject,
   PathObject,
-  ComponentsObject,
+  ReferenceObject,
   RequestBodyObject,
-} from '@loopback/openapi-v3-types';
-import {getJsonSchema} from '@loopback/repository-json-schema';
-import {OAI3Keys} from './keys';
-import {jsonToSchemaObject} from './json-to-schema';
-import * as _ from 'lodash';
-import {resolveSchema} from './generate-schema';
+  ResponseObject,
+  SchemaObject,
+  SchemasObject,
+} from './types';
 
 const debug = require('debug')('loopback:openapi3:metadata:controller-spec');
-
-// tslint:disable:no-any
 
 export interface ControllerSpec {
   /**
@@ -50,9 +57,11 @@ export interface RestEndpoint {
   spec?: OperationObject;
 }
 
+export const TS_TYPE_KEY = 'x-ts-type';
+
 /**
  * Build the api spec from class and method level decorations
- * @param constructor Controller class
+ * @param constructor - Controller class
  */
 function resolveControllerSpec(constructor: Function): ControllerSpec {
   debug(`Retrieving OpenAPI specification for controller ${constructor.name}`);
@@ -108,30 +117,14 @@ function resolveControllerSpec(constructor: Function): ControllerSpec {
 
     debug('  spec responses for method %s: %o', op, operationSpec.responses);
 
-    const TS_TYPE_KEY = 'x-ts-type';
-
     for (const code in operationSpec.responses) {
-      for (const c in operationSpec.responses[code].content) {
-        debug('  evaluating response code %s with content: %o', code, c);
-        const content = operationSpec.responses[code].content[c];
-        const tsType = content[TS_TYPE_KEY];
-        debug('  %s => %o', TS_TYPE_KEY, tsType);
-        if (tsType) {
-          content.schema = resolveSchema(tsType, content.schema);
-
-          // We don't want a Function type in the final spec.
-          delete content[TS_TYPE_KEY];
-        }
-
-        if (content.schema.type === 'array') {
-          content.schema.items = resolveSchema(
-            content.schema.items[TS_TYPE_KEY],
-            content.schema.items,
-          );
-
-          // We don't want a Function type in the final spec.
-          delete content.schema.items[TS_TYPE_KEY];
-        }
+      const responseObject: ResponseObject | ReferenceObject =
+        operationSpec.responses[code];
+      if (isReferenceObject(responseObject)) continue;
+      const content = responseObject.content || {};
+      for (const c in content) {
+        debug('  processing response code %s with content-type %', code, c);
+        processSchemaExtensions(spec, content[c].schema);
       }
     }
 
@@ -147,7 +140,7 @@ function resolveControllerSpec(constructor: Function): ControllerSpec {
       params = DecoratorFactory.cloneDeep<ParameterObject[]>(params);
       /**
        * If a controller method uses dependency injection, the parameters
-       * might be sparsed. For example,
+       * might be sparse. For example,
        * ```ts
        * class MyController {
        *   greet(
@@ -157,13 +150,15 @@ function resolveControllerSpec(constructor: Function): ControllerSpec {
        *   }
        * ```
        */
-      operationSpec.parameters = params.filter(p => p != null).map(p => {
-        // Per OpenAPI spec, `required` must be `true` for path parameters
-        if (p.in === 'path') {
-          p.required = true;
-        }
-        return p;
-      });
+      operationSpec.parameters = params
+        .filter(p => p != null)
+        .map(p => {
+          // Per OpenAPI spec, `required` must be `true` for path parameters
+          if (p.in === 'path') {
+            p.required = true;
+          }
+          return p;
+        });
     }
 
     debug('  processing requestBody for method %s', op);
@@ -185,10 +180,27 @@ function resolveControllerSpec(constructor: Function): ControllerSpec {
       debug('  requestBody for method %s: %j', op, requestBody);
       if (requestBody) {
         operationSpec.requestBody = requestBody;
+
+        const content = requestBody.content || {};
+        for (const mediaType in content) {
+          processSchemaExtensions(spec, content[mediaType].schema);
+        }
       }
     }
 
     operationSpec['x-operation-name'] = op;
+    operationSpec['x-controller-name'] =
+      operationSpec['x-controller-name'] || constructor.name;
+
+    if (operationSpec.operationId == null) {
+      // Build the operationId as `<controllerName>.<operationName>`
+      // Please note API explorer (https://github.com/swagger-api/swagger-js/)
+      // will normalize it as `<controllerName>_<operationName>`
+      operationSpec.operationId =
+        operationSpec['x-controller-name'] +
+        '.' +
+        operationSpec['x-operation-name'];
+    }
 
     if (!spec.paths[path]) {
       spec.paths[path] = {};
@@ -214,41 +226,7 @@ function resolveControllerSpec(constructor: Function): ControllerSpec {
 
     for (const p of paramTypes) {
       if (isComplexType(p)) {
-        if (!spec.components) {
-          spec.components = {};
-        }
-        if (!spec.components.schemas) {
-          spec.components.schemas = {};
-        }
-        if (p.name in spec.components.schemas) {
-          // Preserve user-provided definitions
-          debug(
-            '    skipping parameter type %j as already defined',
-            p.name || p,
-          );
-          continue;
-        }
-        const jsonSchema = getJsonSchema(p);
-        const openapiSchema = jsonToSchemaObject(jsonSchema);
-        const outputSchemas = spec.components.schemas;
-        if (openapiSchema.definitions) {
-          for (const key in openapiSchema.definitions) {
-            // Preserve user-provided definitions
-            if (key in outputSchemas) continue;
-            const relatedSchema = openapiSchema.definitions[key];
-            debug(
-              '    defining referenced schema for %j: %j',
-              key,
-              relatedSchema,
-            );
-            outputSchemas[key] = relatedSchema;
-          }
-          delete openapiSchema.definitions;
-        }
-
-        debug('    defining schema for %j: %j', p.name, openapiSchema);
-        outputSchemas[p.name] = openapiSchema;
-        break;
+        generateOpenAPISchema(spec, p);
       }
     }
   }
@@ -256,8 +234,104 @@ function resolveControllerSpec(constructor: Function): ControllerSpec {
 }
 
 /**
+ * Resolve the x-ts-type in the schema object
+ * @param spec - Controller spec
+ * @param schema - Schema object
+ */
+function processSchemaExtensions(
+  spec: ControllerSpec,
+  schema?: SchemaObject | (ReferenceObject & ISpecificationExtension),
+) {
+  debug('  processing extensions in schema: %j', schema);
+  if (!schema) return;
+
+  assignRelatedSchemas(spec, schema.definitions);
+  delete schema.definitions;
+
+  if (isReferenceObject(schema)) return;
+
+  const tsType = schema[TS_TYPE_KEY];
+  debug('  %s => %o', TS_TYPE_KEY, tsType);
+  if (tsType) {
+    schema = resolveSchema(tsType, schema);
+    if (schema.$ref) generateOpenAPISchema(spec, tsType);
+
+    // We don't want a Function type in the final spec.
+    delete schema[TS_TYPE_KEY];
+    return;
+  }
+  if (schema.type === 'array') {
+    processSchemaExtensions(spec, schema.items);
+  } else if (schema.type === 'object') {
+    if (schema.properties) {
+      for (const p in schema.properties) {
+        processSchemaExtensions(spec, schema.properties[p]);
+      }
+    }
+  }
+}
+
+/**
+ * Generate json schema for a given x-ts-type
+ * @param spec - Controller spec
+ * @param tsType - TS Type
+ */
+function generateOpenAPISchema(spec: ControllerSpec, tsType: Function) {
+  if (!spec.components) {
+    spec.components = {};
+  }
+  if (!spec.components.schemas) {
+    spec.components.schemas = {};
+  }
+  if (tsType.name in spec.components.schemas) {
+    // Preserve user-provided definitions
+    debug('    skipping type %j as already defined', tsType.name || tsType);
+    return;
+  }
+  const jsonSchema = getJsonSchema(tsType);
+  const openapiSchema = jsonToSchemaObject(jsonSchema);
+
+  assignRelatedSchemas(spec, openapiSchema.definitions);
+  delete openapiSchema.definitions;
+
+  debug('    defining schema for %j: %j', tsType.name, openapiSchema);
+  spec.components.schemas[tsType.name] = openapiSchema;
+}
+
+/**
+ * Assign related schemas from definitions to the controller spec
+ * @param spec - Controller spec
+ * @param definitions - Schema definitions
+ */
+function assignRelatedSchemas(
+  spec: ControllerSpec,
+  definitions?: SchemasObject,
+) {
+  if (!definitions) return;
+  debug(
+    '    assigning related schemas: ',
+    definitions && Object.keys(definitions),
+  );
+  if (!spec.components) {
+    spec.components = {};
+  }
+  if (!spec.components.schemas) {
+    spec.components.schemas = {};
+  }
+  const outputSchemas = spec.components.schemas;
+
+  for (const key in definitions) {
+    // Preserve user-provided definitions
+    if (key in outputSchemas) continue;
+    const relatedSchema = definitions[key];
+    debug('    defining referenced schema for %j: %j', key, relatedSchema);
+    outputSchemas[key] = relatedSchema;
+  }
+}
+
+/**
  * Get the controller spec for the given class
- * @param constructor Controller class
+ * @param constructor - Controller class
  */
 export function getControllerSpec(constructor: Function): ControllerSpec {
   let spec = MetadataInspector.getClassMetadata<ControllerSpec>(
@@ -274,4 +348,35 @@ export function getControllerSpec(constructor: Function): ControllerSpec {
     );
   }
   return spec;
+}
+
+/**
+ * Describe the provided Model as a reference to a definition shared by multiple
+ * endpoints. The definition is included in the returned schema.
+ *
+ * @example
+ *
+ * ```ts
+ * const schema = {
+ *   $ref: '#/components/schemas/Product',
+ *   definitions: {
+ *     Product: {
+ *       title: 'Product',
+ *       properties: {
+ *         // etc.
+ *       }
+ *     }
+ *   }
+ * }
+ * ```
+ *
+ * @param modelCtor - The model constructor (e.g. `Product`)
+ * @param options - Additional options
+ */
+export function getModelSchemaRef<T extends object>(
+  modelCtor: Function & {prototype: T},
+  options?: JsonSchemaOptions<T>,
+): SchemaRef {
+  const jsonSchema = getJsonSchemaRef(modelCtor, options);
+  return jsonToSchemaObject(jsonSchema) as SchemaRef;
 }

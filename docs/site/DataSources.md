@@ -12,6 +12,8 @@ A `DataSource` in LoopBack 4 is a named configuration for a Connector instance
 that represents data in an external system. The Connector is used by
 `legacy-juggler-bridge` to power LoopBack 4 Repositories for Data operations.
 
+![Datasource diagram](imgs/datasource.png)
+
 ### Creating a DataSource
 
 It is recommended to use the [`lb4 datasource` command](DataSource-generator.md)
@@ -34,10 +36,16 @@ Example DataSource Class:
 
 ```ts
 import {inject} from '@loopback/core';
-import {juggler, DataSource} from '@loopback/repository';
+import {juggler} from '@loopback/repository';
+import * as config from './db.datasource.json';
 
 export class DbDataSource extends juggler.DataSource {
-  constructor(@inject('datasources.config.db') dsConfig: DataSource) {
+  static dataSourceName = 'db';
+
+  constructor(
+    @inject('datasources.config.db', {optional: true})
+    dsConfig: object = config,
+  ) {
     super(dsConfig);
   }
 }

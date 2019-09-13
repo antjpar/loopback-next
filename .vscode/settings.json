@@ -7,6 +7,9 @@
   "[html]": {
     "editor.formatOnSave": false
   },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+  },
   "files.exclude": {
     "**/.DS_Store": true,
     "**/.git": true,
@@ -17,13 +20,21 @@
     "coverage": true,
     "benchmark/dist": true,
     "packages/*/dist": true,
-    "packages/*/api-docs": true,
+    "extensions/*/dist": true,
     "examples/*/dist": true,
     "**/.sandbox": true
   },
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
-  "tslint.ignoreDefinitionFiles": true,
-  "tslint.nodePath": "./packages/build/node_modules",
-  "typescript.tsdk": "./packages/build/node_modules/typescript/lib"
+  "typescript.tsdk": "./packages/build/node_modules/typescript/lib",
+  "eslint.autoFixOnSave": true,
+  "eslint.run": "onSave",
+  "eslint.nodePath": "./packages/build/node_modules",
+  "eslint.validate": [
+    "javascript",
+    {
+        "language": "typescript",
+        "autoFix": true
+    }
+  ]
 }

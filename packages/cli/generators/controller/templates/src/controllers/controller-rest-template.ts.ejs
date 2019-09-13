@@ -10,8 +10,10 @@ import {
   param,
   get,
   getFilterSchemaFor,
+  getModelSchemaRef,
   getWhereSchemaFor,
   patch,
+  put,
   del,
   requestBody,
 } from '@loopback/rest';
@@ -28,12 +30,21 @@ export class <%= className %>Controller {
     responses: {
       '200': {
         description: '<%= modelName %> model instance',
-        content: {'application/json': {'x-ts-type': <%= modelName %>}},
+        content: {'application/json': {schema: getModelSchemaRef(<%= modelName %>)}},
       },
     },
   })
-  async create(@requestBody() <%= modelVariableName %>: <%= modelName %>): Promise<<%= modelName %>> {
-    return await this.<%= repositoryNameCamel %>.create(<%= modelVariableName %>);
+  async create(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(<%= modelName %>, {exclude: ['<%= id %>']}),
+        },
+      },
+    })
+    <%= modelVariableName %>: Omit<<%= modelName %>, '<%= id %>'>,
+  ): Promise<<%= modelName %>> {
+    return this.<%= repositoryNameCamel %>.create(<%= modelVariableName %>);
   }
 
   @get('<%= httpPathName %>/count', {
@@ -45,9 +56,9 @@ export class <%= className %>Controller {
     },
   })
   async count(
-    @param.query.object('where', getWhereSchemaFor(<%= modelName %>)) where?: Where,
+    @param.query.object('where', getWhereSchemaFor(<%= modelName %>)) where?: Where<<%= modelName %>>,
   ): Promise<Count> {
-    return await this.<%= repositoryNameCamel %>.count(where);
+    return this.<%= repositoryNameCamel %>.count(where);
   }
 
   @get('<%= httpPathName %>', {
@@ -56,16 +67,16 @@ export class <%= className %>Controller {
         description: 'Array of <%= modelName %> model instances',
         content: {
           'application/json': {
-            schema: {type: 'array', items: {'x-ts-type': <%= modelName %>}},
+            schema: {type: 'array', items: getModelSchemaRef(<%= modelName %>)},
           },
         },
       },
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(<%= modelName %>)) filter?: Filter,
+    @param.query.object('filter', getFilterSchemaFor(<%= modelName %>)) filter?: Filter<<%= modelName %>>,
   ): Promise<<%= modelName %>[]> {
-    return await this.<%= repositoryNameCamel %>.find(filter);
+    return this.<%= repositoryNameCamel %>.find(filter);
   }
 
   @patch('<%= httpPathName %>', {
@@ -77,22 +88,29 @@ export class <%= className %>Controller {
     },
   })
   async updateAll(
-    @requestBody() <%= modelVariableName %>: <%= modelName %>,
-    @param.query.object('where', getWhereSchemaFor(<%= modelName %>)) where?: Where,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(<%= modelName %>, {partial: true}),
+        },
+      },
+    })
+    <%= modelVariableName %>: <%= modelName %>,
+    @param.query.object('where', getWhereSchemaFor(<%= modelName %>)) where?: Where<<%= modelName %>>,
   ): Promise<Count> {
-    return await this.<%= repositoryNameCamel %>.updateAll(<%= modelVariableName %>, where);
+    return this.<%= repositoryNameCamel %>.updateAll(<%= modelVariableName %>, where);
   }
 
   @get('<%= httpPathName %>/{id}', {
     responses: {
       '200': {
         description: '<%= modelName %> model instance',
-        content: {'application/json': {'x-ts-type': <%= modelName %>}},
+        content: {'application/json': {schema: getModelSchemaRef(<%= modelName %>)}},
       },
     },
   })
   async findById(@param.path.<%= idType %>('id') id: <%= idType %>): Promise<<%= modelName %>> {
-    return await this.<%= repositoryNameCamel %>.findById(id);
+    return this.<%= repositoryNameCamel %>.findById(id);
   }
 
   @patch('<%= httpPathName %>/{id}', {
@@ -104,9 +122,30 @@ export class <%= className %>Controller {
   })
   async updateById(
     @param.path.<%= idType %>('id') id: <%= idType %>,
-    @requestBody() <%= modelVariableName %>: <%= modelName %>,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(<%= modelName %>, {partial: true}),
+        },
+      },
+    })
+    <%= modelVariableName %>: <%= modelName %>,
   ): Promise<void> {
     await this.<%= repositoryNameCamel %>.updateById(id, <%= modelVariableName %>);
+  }
+
+  @put('<%= httpPathName %>/{id}', {
+    responses: {
+      '204': {
+        description: '<%= modelName %> PUT success',
+      },
+    },
+  })
+  async replaceById(
+    @param.path.<%= idType %>('id') id: <%= idType %>,
+    @requestBody() <%= modelVariableName %>: <%= modelName %>,
+  ): Promise<void> {
+    await this.<%= repositoryNameCamel %>.replaceById(id, <%= modelVariableName %>);
   }
 
   @del('<%= httpPathName %>/{id}', {

@@ -46,10 +46,12 @@ package (with custom booters).
 ## BootMixin
 
 Boot functionality can be added to a LoopBack 4 Application by mixing it with
-the `BootMixin`. The Mixin adds the `BootComponent` to your Application as well
-as convenience methods such as `app.boot()` and `app.booters()`. The Mixin also
-allows Components to set the property `booters` as an Array of `Booters`. They
-will be bound to the Application and called by the `Bootstrapper`.
+the `BootMixin`
+[mixin](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/).
+This mixin adds the `BootComponent` to your Application as well as convenience
+methods such as `app.boot()` and `app.booters()`. The Mixin also allows
+Components to set the property `booters` as an Array of `Booters`. They will be
+bound to the Application and called by the `Bootstrapper`.
 
 Since this is a convention-based Bootstrapper, it is important to set a
 `projectRoot`, as all other artifact paths will be resolved relative to this
@@ -241,12 +243,12 @@ The `datasources` object support the following options:
 
 #### Description
 
-Discovers and binds Service providers using `app.serviceProvider()` (Application
-must use `ServiceMixin` from `@loopback/service-proxy`).
+Discovers and binds remote service proxies or local service classes or providers
+using `app.service()`.
 
 **IMPORTANT:** For a class to be recognized by `ServiceBooter` as a service
-provider, its name must end with `Provider` suffix and its prototype must have a
-`value()` method.
+provider, it either has to be decorated with `@bind` or the class name must end
+with `Provider` suffix and its prototype must have a `value()` method.
 
 #### Options
 

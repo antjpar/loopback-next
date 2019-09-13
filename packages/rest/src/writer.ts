@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2017. All Rights Reserved.
+// Copyright IBM Corp. 2017,2018. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -10,8 +10,8 @@ import {Readable} from 'stream';
  * Writes the result from Application controller method
  * into the HTTP response
  *
- * @param response HTTP Response
- * @param result Result from the API to write into HTTP Response
+ * @param response - HTTP Response
+ * @param result - Result from the API to write into HTTP Response
  */
 export function writeResultToResponse(
   // not needed and responsibility should be in the sequence.send

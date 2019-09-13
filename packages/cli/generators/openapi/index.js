@@ -8,7 +8,7 @@
 const BaseGenerator = require('../../lib/base-generator');
 const {debug, debugJson} = require('./utils');
 const {loadAndBuildSpec} = require('./spec-loader');
-const {validateUrlOrFile} = require('./utils');
+const {validateUrlOrFile, escapeComment} = require('./utils');
 const {getControllerFileName} = require('./spec-helper');
 
 const updateIndex = require('../../lib/update-index');
@@ -38,6 +38,14 @@ module.exports = class OpenApiGenerator extends BaseGenerator {
       default: false,
       type: Boolean,
     });
+
+    this.option('promote-anonymous-schemas', {
+      description: 'Promote anonymous schemas as models',
+      required: false,
+      default: false,
+      type: Boolean,
+    });
+
     return super._setupGenerator();
   }
 
@@ -70,6 +78,7 @@ module.exports = class OpenApiGenerator extends BaseGenerator {
       const result = await loadAndBuildSpec(this.url, {
         log: this.log,
         validate: this.options.validate,
+        promoteAnonymousSchemas: this.options['promote-anonymous-schemas'],
       });
       debugJson('OpenAPI spec', result.apiSpec);
       Object.assign(this, result);
@@ -126,7 +135,7 @@ module.exports = class OpenApiGenerator extends BaseGenerator {
       if (debug.enabled) {
         debug('Copying artifact to: %s', dest);
       }
-      this.fs.copyTpl(source, dest, c, {}, {globOptions: {dot: true}});
+      this.copyTemplatedFiles(source, dest, mixinEscapeComment(c));
     }
   }
 
@@ -144,7 +153,7 @@ module.exports = class OpenApiGenerator extends BaseGenerator {
         debug('Copying artifact to: %s', dest);
       }
       const source = m.kind === 'class' ? modelSource : typeSource;
-      this.fs.copyTpl(source, dest, m, {}, {globOptions: {dot: true}});
+      this.copyTemplatedFiles(source, dest, mixinEscapeComment(m));
     }
   }
 
@@ -164,3 +173,7 @@ module.exports = class OpenApiGenerator extends BaseGenerator {
     if (this.shouldExit()) return;
   }
 };
+
+function mixinEscapeComment(context) {
+  return Object.assign(context, {escapeComment});
+}

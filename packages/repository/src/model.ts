@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2017. All Rights Reserved.
+// Copyright IBM Corp. 2017,2019. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -14,12 +14,12 @@ import {Type} from './types';
  * See https://en.wikipedia.org/wiki/Domain-driven_design#Building_blocks
  */
 
-// tslint:disable:no-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export type PropertyType =
   | string
   | Function
-  | Object
+  | object
   | Type<any>
   | TypeResolver<Model>;
 
@@ -28,8 +28,9 @@ export type PropertyType =
  */
 export interface PropertyDefinition {
   type: PropertyType; // For example, 'string', String, or {}
-  id?: boolean;
+  id?: boolean | number;
   json?: PropertyForm;
+  jsonSchema?: {[attribute: string]: any};
   store?: PropertyForm;
   itemType?: PropertyType; // type of array
   [attribute: string]: any; // Other attributes
@@ -95,8 +96,8 @@ export class ModelDefinition {
 
   /**
    * Add a property
-   * @param property Property definition or name (string)
-   * @param type Property type
+   * @param name - Property definition or name (string)
+   * @param definitionOrType - Definition or property type
    */
   addProperty(
     name: string,
@@ -111,8 +112,8 @@ export class ModelDefinition {
 
   /**
    * Add a setting
-   * @param name Setting name
-   * @param value Setting value
+   * @param name - Setting name
+   * @param value - Setting value
    */
   addSetting(name: string, value: any): this {
     this.settings[name] = value;
@@ -121,7 +122,7 @@ export class ModelDefinition {
 
   /**
    * Define a new relation.
-   * @param definition The definition of the new relation.
+   * @param definition - The definition of the new relation.
    */
   addRelation(definition: RelationMetadata): this {
     this.relations[definition.name] = definition;
@@ -130,8 +131,10 @@ export class ModelDefinition {
 
   /**
    * Get an array of names of ID properties, which are specified in
-   * the model settings or properties with `id` attribute. For example,
-   * ```
+   * the model settings or properties with `id` attribute.
+   *
+   * @example
+   * ```ts
    * {
    *   settings: {
    *     id: ['id']
@@ -203,12 +206,25 @@ export abstract class Model {
       return this.toObject({ignoreUnknownProperties: false});
     }
 
+    const copyPropertyAsJson = (key: string) => {
+      json[key] = asJSON((this as AnyObject)[key]);
+    };
+
     const json: AnyObject = {};
+    const hiddenProperties: string[] = def.settings.hiddenProperties || [];
     for (const p in def.properties) {
-      if (p in this) {
-        json[p] = asJSON((this as AnyObject)[p]);
+      if (p in this && !hiddenProperties.includes(p)) {
+        copyPropertyAsJson(p);
       }
     }
+
+    for (const r in def.relations) {
+      const relName = def.relations[r].name;
+      if (relName in this) {
+        copyPropertyAsJson(relName);
+      }
+    }
+
     return json;
   }
 
@@ -220,7 +236,7 @@ export abstract class Model {
     if (options && options.ignoreUnknownProperties === false) {
       obj = {};
       for (const p in this) {
-        let val = (this as AnyObject)[p];
+        const val = (this as AnyObject)[p];
         obj[p] = asObject(val, options);
       }
     } else {
@@ -249,9 +265,16 @@ export abstract class ValueObject extends Model implements Persistable {}
  */
 export abstract class Entity extends Model implements Persistable {
   /**
+   * Get the names of identity properties (primary keys).
+   */
+  static getIdProperties(): string[] {
+    return this.definition.idProperties();
+  }
+
+  /**
    * Get the identity value for a given entity instance or entity data object.
    *
-   * @param entityOrData The data object for which to determine the identity
+   * @param entityOrData - The data object for which to determine the identity
    * value.
    */
   static getIdOf(entityOrData: AnyObject): any {
@@ -298,7 +321,7 @@ export abstract class Entity extends Model implements Persistable {
 
   /**
    * Build the where object for the given id
-   * @param id The id value
+   * @param id - The id value
    */
   static buildWhereForId(id: any) {
     const where = {} as any;

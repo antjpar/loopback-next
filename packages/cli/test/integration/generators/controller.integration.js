@@ -29,7 +29,8 @@ const basicCLIInput = {
 const restCLIInput = {
   name: 'productReview',
   controllerType: ControllerGenerator.REST,
-  id: 'number',
+  id: 'productId',
+  idType: 'number',
 };
 
 // Expected File Name
@@ -56,15 +57,15 @@ describe('lb4 controller', () => {
     ).to.be.rejectedWith(/No package.json found in/);
   });
 
-  it('does not run without the loopback keyword', () => {
+  it('does not run without "@loopback/core" as a dependency', () => {
     return expect(
       testUtils
         .executeGenerator(generator)
         .inDir(SANDBOX_PATH, () =>
-          testUtils.givenLBProject(SANDBOX_PATH, {excludeKeyword: true}),
+          testUtils.givenLBProject(SANDBOX_PATH, {excludeLoopbackCore: true}),
         )
         .withPrompts(basicCLIInput),
-    ).to.be.rejectedWith(/No `loopback` keyword found in/);
+    ).to.be.rejectedWith(/No `@loopback\/core` package found/);
   });
 
   describe('basic controller', () => {
@@ -247,8 +248,8 @@ function checkRestCrudContents() {
     /responses: {/,
     /'200': {/,
     /description: 'ProductReview model instance'/,
-    /content: {'application\/json': {'x-ts-type': ProductReview}},\s{1,}},\s{1,}},\s{1,}}\)/,
-    /async create\(\@requestBody\(\) productReview: ProductReview\)/,
+    /content: {'application\/json': {schema: getModelSchemaRef\(ProductReview\)}},\s{1,}},\s{1,}},\s{1,}}\)/,
+    /async create\(\s+\@requestBody\({\s+content: {\s+'application\/json': {\s+schema: getModelSchemaRef\(ProductReview, {exclude: \['productId'\]}\),\s+},\s+},\s+}\)\s+productReview: Omit<ProductReview, 'productId'>,\s+\)/,
   ];
   postCreateRegEx.forEach(regex => {
     assert.fileContent(expectedFile, regex);
@@ -261,7 +262,7 @@ function checkRestCrudContents() {
     /'200': {/,
     /description: 'ProductReview model count'/,
     /content: {'application\/json': {schema: CountSchema}},\s{1,}},\s{1,}},\s{1,}}\)/,
-    /async count\(\s+\@param\.query\.object\('where', getWhereSchemaFor\(ProductReview\)\) where\?: Where(|,\s+)\)/,
+    /async count\(\s+\@param\.query\.object\('where', getWhereSchemaFor\(ProductReview\)\) where\?: Where<ProductReview>(|,\s+)\)/,
   ];
   getCountRegEx.forEach(regex => {
     assert.fileContent(expectedFile, regex);
@@ -273,8 +274,8 @@ function checkRestCrudContents() {
     /responses: {/,
     /'200': {/,
     /description: 'Array of ProductReview model instances'/,
-    /content: {'application\/json': {'x-ts-type': ProductReview}},\s{1,}},\s{1,}},\s{1,}}\)/,
-    /async find\(\s*\@param\.query\.object\('filter', getFilterSchemaFor\(ProductReview\)\) filter\?: Filter(|,\s+)\)/,
+    /content: {'application\/json': {schema: getModelSchemaRef\(ProductReview\)}},\s{1,}},\s{1,}},\s{1,}}\)/,
+    /async find\(\s*\@param\.query\.object\('filter', getFilterSchemaFor\(ProductReview\)\) filter\?: Filter<ProductReview>(|,\s+)\)/,
   ];
   getFindRegEx.forEach(regex => {
     assert.fileContent(expectedFile, regex);
@@ -287,7 +288,7 @@ function checkRestCrudContents() {
     /'200': {/,
     /description: 'ProductReview PATCH success count'/,
     /content: {'application\/json': {schema: CountSchema}},\s{1,}},\s{1,}},\s{1,}}\)/,
-    /async updateAll\(\s{1,}\@requestBody\(\) productReview: ProductReview,\s{1,} @param\.query\.object\('where', getWhereSchemaFor\(ProductReview\)\) where\?: Where(|,\s+)\)/,
+    /async updateAll\(\s+\@requestBody\({\s+content: {\s+'application\/json': {\s+schema: getModelSchemaRef\(ProductReview, {partial: true}\),\s+},\s+},\s+}\)\s+productReview: ProductReview,\s{1,} @param\.query\.object\('where', getWhereSchemaFor\(ProductReview\)\) where\?: Where<ProductReview>(|,\s+)\)/,
   ];
   patchUpdateAllRegEx.forEach(regex => {
     assert.fileContent(expectedFile, regex);
@@ -299,7 +300,7 @@ function checkRestCrudContents() {
     /responses: {/,
     /'200': {/,
     /description: 'ProductReview model instance'/,
-    /content: {'application\/json': {'x-ts-type': ProductReview}},\s{1,}},\s{1,}},\s{1,}}\)/,
+    /content: {'application\/json': {schema: getModelSchemaRef\(ProductReview\)}},\s{1,}},\s{1,}},\s{1,}}\)/,
     /async findById\(\@param.path.number\('id'\)/,
   ];
   getFindByIdRegEx.forEach(regex => {
@@ -312,9 +313,21 @@ function checkRestCrudContents() {
     /responses: {/,
     /'204': {/,
     /description: 'ProductReview PATCH success'/,
-    /async updateById\(\s{1,}\@param.path.number\('id'\) id: number,\s{1,}\@requestBody\(\) productReview: ProductReview,\s+\)/,
+    /async updateById\(\s+\@param.path.number\('id'\) id: number,\s+\@requestBody\({\s+content: {\s+'application\/json': {\s+schema: getModelSchemaRef\(ProductReview, {partial: true}\),\s+},\s+},\s+}\)\s+productReview: ProductReview,\s+\)/,
   ];
   patchUpdateByIdRegEx.forEach(regex => {
+    assert.fileContent(expectedFile, regex);
+  });
+
+  // @put - replaceById
+  const putReplaceByIdRegEx = [
+    /\@put\('\/product-reviews\/{id}'/,
+    /responses: {/,
+    /'204': {/,
+    /description: 'ProductReview PUT success'/,
+    /async replaceById\(\s{1,}\@param.path.number\('id'\) id: number,\s{1,}\@requestBody\(\) productReview: ProductReview,\s+\)/,
+  ];
+  putReplaceByIdRegEx.forEach(regex => {
     assert.fileContent(expectedFile, regex);
   });
 

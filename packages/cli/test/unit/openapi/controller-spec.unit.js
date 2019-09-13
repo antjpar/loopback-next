@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2018. All Rights Reserved.
 // Node module: @loopback/cli
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -23,13 +23,13 @@ describe('openapi to controllers/models', () => {
         imports: ["import {Customer} from '../models/customer.model';"],
         methods: [
           {
-            description: 'Returns all customers',
+            description: 'Returns all customers (/* customers */)',
             comments: [
-              'Returns all customers',
+              'Returns all customers (/* customers */)',
               '\n',
               '@param _if if condition',
               '@param limit maximum number of results to return',
-              '@param accessToken Access token',
+              '@param accessToken Access token (/* access_token */)',
               '@returns customer response',
             ],
             decoration: "@operation('get', '/customers')",
@@ -44,13 +44,13 @@ describe('openapi to controllers/models', () => {
             comments: [
               'Creates a new customer',
               '\n',
-              '@param body Customer to add',
-              '@param accessToken Access token',
+              '@param _requestBody Customer to add',
+              '@param accessToken Access token (/* access_token */)',
               '@returns customer response',
             ],
             decoration: "@operation('post', '/customers')",
             signature:
-              'async createCustomer(@requestBody() body: Customer, ' +
+              'async createCustomer(@requestBody() _requestBody: Customer, ' +
               "@param({name: 'access-token', in: 'query'}) accessToken: " +
               'string): Promise<Customer>',
           },
@@ -59,13 +59,13 @@ describe('openapi to controllers/models', () => {
             comments: [
               'Returns a customer based on a single ID',
               '\n',
-              '@param id ID of customer to fetch',
+              '@param customerId ID of customer to fetch',
               '@returns customer response',
             ],
-            decoration: "@operation('get', '/customers/{id}')",
+            decoration: "@operation('get', '/customers/{customer_id}')",
             signature:
-              "async findCustomerById(@param({name: 'id', in: 'path'}) " +
-              'id: number): Promise<Customer>',
+              "async findCustomerById(@param({name: 'customer_id', " +
+              "in: 'path'}) customerId: number): Promise<Customer>",
             implementation:
               "return {id: id, 'first-name': 'John', last-name: 'Smith'};",
           },

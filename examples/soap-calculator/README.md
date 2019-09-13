@@ -27,52 +27,44 @@ npm i -g @loopback/cli
 
 ## Start the Tutorial
 
-Follow the following steps to start buiding your application:
+Follow the following steps to start building your application:
 
 ### Steps
 
-1. [SOAP Web Service Overview](https://loopback.io/doc/en/lb4/soap-calculator-tutorial-web-service-overview.html)
-2. [Scaffold the Application](https://loopback.io/doc/en/lb4/soap-calculator-tutorial-scaffolding.html)
+1. [SOAP web service overview](https://loopback.io/doc/en/lb4/soap-calculator-tutorial-web-service-overview.html)
+2. [Scaffold the application](https://loopback.io/doc/en/lb4/soap-calculator-tutorial-scaffolding.html)
 3. [Add a data source](https://loopback.io/doc/en/lb4/soap-calculator-tutorial-add-datasource.html)
-4. [Add a Service](https://loopback.io/doc/en/lb4/soap-calculator-tutorial-add-service.html)
+4. [Add a service proxy](https://loopback.io/doc/en/lb4/soap-calculator-tutorial-add-service.html)
 5. [Add a controller](https://loopback.io/doc/en/lb4/soap-calculator-tutorial-add-controller.html)
-6. [Register the service](https://loopback.io/doc/en/lb4/soap-calculator-tutorial-make-service-available.md)
-7. [Run and Test the application](https://loopback.io/doc/en/lb4/soap-calculator-run-and-and-test.md)
+6. [Run and test the application](https://loopback.io/doc/en/lb4/soap-calculator-tutorial-run-and-test.html)
 
-## or Try it out
+## Try it out
 
 If you'd like to see the final results of this tutorial as an example
 application, follow these steps:
 
 ### Generate the example using CLI
 
-1.Run the `lb4 example` command to select and clone the soap-calculator
-repository:
+1. Run the `lb4 example` command to select and clone the soap-calculator
+   repository:
 
 ```sh
-$ lb4 example
-? What example would you like to clone? (Use arrow keys)
-  todo: Tutorial example on how to build an application with LoopBack 4.
-  todo-list: Continuation of the todo example using relations in LoopBack 4.
-  hello-world: A simple hello-world Application using LoopBack 4.
-  log-extension: An example extension project for LoopBack 4.
-  rpc-server: A basic RPC server using a made-up protocol.
-> soap-calculator: An example on how to integrate SOAP web services.
+lb4 example soap-calculator
 ```
 
-2.Jump into the directory and then install the required dependencies:
+2. Jump into the directory and then install the required dependencies:
 
 ```sh
 cd loopback4-example-soap-calculator
 ```
 
-3.Finally, start the application!
+3. Finally, start the application!
 
-    ```sh
-    $ npm start
+```sh
+$ npm start
 
-    Server is running on port 3000
-    ```
+Server is running at http://127.0.0.1:3000
+```
 
 Feel free to look around in the application's code to get a feel for how it
 works.

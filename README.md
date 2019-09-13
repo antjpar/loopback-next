@@ -1,7 +1,7 @@
-# loopback-next
+<img src="https://raw.githubusercontent.com/strongloop/loopback.io/gh-pages/images/branding/logo/blue/loopback-sm.png" alt="LoopBack4 logo" width="400"/>
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/strongloop/loopback)
-[![Travis Build Status](https://travis-ci.org/strongloop/loopback-next.svg?branch=master)](https://travis-ci.org/strongloop/loopback-next)
+[![Travis Build Status](https://travis-ci.com/strongloop/loopback-next.svg?branch=master)](https://travis-ci.com/strongloop/loopback-next)
 [![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/q8vp7wrdn2ak6801/branch/master?svg=true)](https://ci.appveyor.com/project/strongloop/loopback-next/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/strongloop/loopback-next/badge.svg?branch=master)](https://coveralls.io/github/strongloop/loopback-next?branch=master)
 
@@ -30,13 +30,13 @@ Check the
 for all the API usages in each package.
 
 [LoopBack 3](https://loopback.io/doc/en/lb3/) became active LTS version, and
-[LoopBack 2](https://loopback.io/doc/en/lb2/) became maintenance LTS version.
+[LoopBack 2](https://loopback.io/doc/en/lb2/) has reached end-of-life.
 
-| Version    | Status          | Published | EOL                  |
-| ---------- | --------------- | --------- | -------------------- |
-| LoopBack 4 | Current         | Oct 2018  | Apr 2021 _(minimum)_ |
-| Loopback 3 | Active LTS      | Dec 2016  | Dec 2019             |
-| Loopback 2 | Maintenance LTS | Jul 2014  | Apr 2019             |
+| Version    | Status      | Published | EOL                  |
+| ---------- | ----------- | --------- | -------------------- |
+| LoopBack 4 | Current     | Oct 2018  | Apr 2021 _(minimum)_ |
+| LoopBack 3 | Active LTS  | Dec 2016  | Dec 2020             |
+| LoopBack 2 | End-of-Life | Jul 2014  | Apr 2019             |
 
 Please refer to our
 [Long Term Support Policy](https://loopback.io/doc/en/contrib/Long-term-support.html)
@@ -63,7 +63,8 @@ To create your first LoopBack 4 application, see
 - [API documentation](http://apidocs.loopback.io/#LoopBack4)
 - [FAQ](http://loopback.io/doc/en/lb4/FAQ.html)
 - [LoopBack 3 vs LoopBack 4](http://loopback.io/doc/en/lb4/LoopBack-3.x.html)
-- [Tutorials and examples](http://loopback.io/doc/en/lb4/Examples-and-tutorials.html)
+- [Tutorials](http://loopback.io/doc/en/lb4/Tutorials.html)
+- [Examples](http://loopback.io/doc/en/lb4/Examples.html)
 
 ## Contributing
 
@@ -92,6 +93,8 @@ You can join the team by posting a comment to
 |    [![b-admike]](http://github.com/b-admike)     |      [![dhmlau]](http://github.com/dhmlau)       |         [![jannyhou]](http://github.com/jannyHou)          |
 |                    Hage Yaapa                    |                 Nora Abdelgadir                  |                       Mario Estrada                        |
 | [![hacksparrow]](https://github.com/hacksparrow) | [![nabdelgadir]](https://github.com/nabdelgadir) | [![marioestradarosa]](https://github.com/marioestradarosa) |
+|                   Hugo Da Roit                   |                 Dominique Emond                  |                         Agnes Lin                          |
+|        [![yaty]](https://github.com/yaty)        |     [![emonddr]](https://github.com/emonddr)     |         [![agnes512]](https://github.com/agnes512)         |
 
 See
 [all contributors](https://github.com/strongloop/loopback-next/graphs/contributors).
@@ -109,3 +112,6 @@ See
 [hacksparrow]: https://avatars2.githubusercontent.com/u/950112?v=3&s=60
 [nabdelgadir]: https://avatars0.githubusercontent.com/u/42985749?v=3&s=60
 [marioestradarosa]: https://avatars2.githubusercontent.com/u/4633823?v=3&s=60
+[yaty]: https://avatars3.githubusercontent.com/u/11981803?v=3&s=60
+[emonddr]: https://avatars0.githubusercontent.com/u/6864736??v=3&s=60
+[agnes512]: https://avatars3.githubusercontent.com/u/50331796?v=3&s=60

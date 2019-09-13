@@ -1,10 +1,9 @@
-// Copyright IBM Corp. 2017. All Rights Reserved.
+// Copyright IBM Corp. 2017,2018. All Rights Reserved.
 // Node module: @loopback/cli
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-const Generator = require('yeoman-generator');
 const utils = require('../../lib/utils');
 
 const ProjectGenerator = require('../../lib/project-generator');

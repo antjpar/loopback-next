@@ -1,18 +1,18 @@
-// Copyright IBM Corp. 2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/http-caching-proxy
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
 import * as debugFactory from 'debug';
 import {
+  createServer,
+  IncomingMessage,
   OutgoingHttpHeaders,
   Server as HttpServer,
-  IncomingMessage,
   ServerResponse,
-  createServer,
 } from 'http';
 import {AddressInfo} from 'net';
-import * as pEvent from 'p-event';
+import pEvent from 'p-event';
 import * as makeRequest from 'request-promise-native';
 
 const cacache = require('cacache');
@@ -174,7 +174,6 @@ export class HttpCachingProxy {
     clientRequest: IncomingMessage,
     clientResponse: ServerResponse,
   ) {
-    // tslint:disable-next-line:await-promise
     const backendResponse = await makeRequest({
       resolveWithFullResponse: true,
       simple: false,

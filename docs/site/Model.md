@@ -6,13 +6,15 @@ sidebar: lb4_sidebar
 permalink: /doc/en/lb4/Model.html
 ---
 
-{% include content/tbd.html %}
-
 ## Overview
 
 A model describes business domain objects, for example, `Customer`, `Address`,
 and `Order`. It usually defines a list of properties with name, type, and other
 constraints.
+
+{% include note.html content="Models describe the shape of data. Behavior like CRUD operations is added by repositories. This is different from LoopBack 3.x where models implement behavior too." %}
+
+{% include tip.html content="A single model can be used with multiple different Repositories." %}
 
 Models can be used for data exchange on the wire or between different systems.
 For example, a JSON object conforming to the `Customer` model definition can be
@@ -95,13 +97,19 @@ export class Customer {
 }
 ```
 
+## Model Discovery
+
+LoopBack can automatically create model definitions by discovering the schema of
+your database. See [Discovering models](Discovering-models.md) for more details
+and a list of connectors supporting model discovery.
+
 ## Using the Juggler Bridge
 
 To define a model for use with the juggler bridge, extend your classes from
 `Entity` and decorate them with the `@model` and `@property` decorators.
 
 ```ts
-import {model, property} from '@loopback/repository';
+import {model, property, Entity} from '@loopback/repository';
 
 @model()
 export class Product extends Entity {
@@ -129,8 +137,8 @@ persistence layer respects this constraint and configures underlying
 PersistedModel classes to enforce `strict` mode.
 
 To create a model that allows both well-defined but also arbitrary extra
-properties, you need to disable `strict` mode in model settings and tell
-TypeScript to allow arbitrary additional properties to be set on model
+properties, you need to disable `strict` mode in model settings through the CLI
+and tell TypeScript to allow arbitrary additional properties to be set on model
 instances.
 
 ```ts
@@ -149,30 +157,28 @@ class MyFlexibleModel extends Entity {
 ### Model Decorator
 
 The model decorator can be used without any additional parameters, or can be
-passed in a
+passed in a ModelDefinitionSyntax:
 
 <!-- should be replaced with a lb4 example when possible -->
-
-[ModelDefinitionSyntax](https://loopback.io/doc/en/lb3/Model-definition-JSON-file.html)
-object which follows the general format provided in LoopBack 3:
+<!-- according to https://github.com/strongloop/loopback-datasource-juggler/blob/master/lib/model-builder.js#L283 and the legacy juggler file-->
 
 ```ts
 @model({
   name: 'Category',
-  properties: {
-    // define properties here.
-  },
   settings: {
     // etc...
   },
+  // define properties by @property decorator below
 })
 class Category extends Entity {
   // etc...
+  @property({type: 'number'})
+  categoryId: number;
 }
 ```
 
-However, the model decorator already knows the name of your model class, so you
-can omit it.
+The model decorator already knows the name of your model class, so you can omit
+it.
 
 ```ts
 @model()
@@ -182,11 +188,226 @@ class Product extends Entity {
 }
 ```
 
-Additionally, the model decorator is able to build the properties object through
-the information passed in or inferred by the property decorators, so the
-properties key value pair can also be omitted.
+However, the model decorator in LoopBack 4 is not exactly the same as what it is
+in LoopBack 3. For example, in
+[lb3](https://loopback.io/doc/en/lb3/Model-definition-JSON-file.html) we can
+pass in a model definition syntax in the model decorator, such as properties,
+options, relation etc. But not all these entries are available in lb4 model
+decorator:
+
+<!-- Please modify this part when options is available -->
+
+NOTICE: in LoopBack 4 we only support `settings` in the ModelDefinitionSyntax
+for now. Those `top-level properties` in lb3 now are passed in `settings`.
+
+- `properties` now are defined in `@property` decorator (see below for more
+  information).
+- [`options`](https://loopback.io/doc/en/lb3/Model-definition-JSON-file.html#options)
+  in lb3 doesn't have the mapping feature in LB4 yet. (see
+  [issue #2142](https://github.com/strongloop/loopback-next/issues/2142) for
+  further discussion.)
+
+As for entries in `settings`, LoopBack 4 supports these built-in entries for
+now:
+
+#### Supported Entries of Settings
+
+<!-- These entries might need to update once we've made some changes:
+  - description [in lb3 we support array or string, but here we documented it as string only]
+  these two don't seem work in lb4. Moved them to unsupported table.
+-->
+
+  <table>
+  <thead>
+  <tr>
+    <th width="160">Property</th>
+    <th width="100">Type</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  </thead>
+
+  <tbody>
+
+  <tr>
+  <td><code>description</code></td>
+  <td>String</td>
+  <td>None</td>
+  <td>
+    Optional description of the model. We only support string type for now. (see <a href="https://github.com/strongloop/loopback-next/issues/3428">issue #3428</a> for more discussion.)
+  </td></tr>
+
+  <tr>
+  <td><code>forceId</code></td>
+  <td>Boolean</td>
+  <td><code>true</code></td>
+  <td>
+    If true, prevents clients from setting the auto-generated ID value manually.
+  </td>
+  </tr>
+
+  <tr>
+    <td><code>strict</code></td>
+    <td>Boolean or String</td>
+    <td><code>true</code>.<br/></td>
+    <td>
+      In LB4, the default for this entry is set to be <code>true</code>.<br/>
+      Specifies whether the model accepts only predefined properties or not. One of:
+      <ul>
+      <li><code>true</code>: Only properties defined in the model are accepted. Use if you want to ensure the model accepts only predefined properties.
+      If you try to save a model instance with properties that are not predefined, LoopBack throws a ValidationError.
+      </li>
+      <li><code>false</code>: The model is an open model and accepts all properties, including ones not predefined in the model.
+        This mode is useful to store free-form JSON data to a schema-less database such as MongoDB.
+      </li>
+      <li><code>"filter"</code>: Only properties defined in the model are accepted.
+      If you load or save a model instance with properties that are not predefined, LoopBack will ignore them. This is particularly useful when dealing with old data that you wish to lose without a migration script.
+      </li>
+      </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>idInjection</code></td>
+    <td>Boolean</td>
+    <td><code>true</code></td>
+    <td>
+      Whether to automatically add an <code>id</code> property to the model:
+    <ul>
+    <li><code>true</code>: <code>id</code> property is added to the model automatically. This is the default.</li>
+    <li><code>false</code>: <code>id</code> property is not added to the model</li>
+    </ul>
+    See <a href="#id-properties">ID properties</a> for more information.  The <code>idInjection</code> property in <code>options</code> (if present) takes precedence.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>name</code></td>
+    <td>String</td>
+    <td>None</td>
+    <td>Name of the model.</td>
+  </tr>
+
+  <tr>
+    <td><code>scopes</code></td>
+    <td>Object</td>
+    <td>N/A</td>
+    <td>See <a href="https://loopback.io/doc/en/lb3/Model-definition-JSON-file.html#scopes">Scopes</a> in lb3 docs.</td>
+  </tr>
+
+  </tbody>
+
+  </table>
+
+#### Unsupported Entries of Settings
+
+<!-- Please update the OPTIONS, ACLS field when they are available -->
+
+<table>
+  <thead>
+    <tr>
+      <th width="160">Property</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+  <tr>
+    <td><code>acls</code></td>
+    <td>
+      (TBD)
+    </td>
+  </tr>
+
+  <tr>
+  <td><code>base</code></td>
+  <td>This entry is no longer being used. This is done by the typical Js/Tsc classes inheritance way in LB4:
+  <pre><code>@model() class MySuperModel extends MyBaseModel {...}</code>
+  </pre></td>
+  </tr>
+
+  <tr>
+  <td><code>excludeBaseProperties</code></td>
+  <td>(TBD)</td>
+  </tr>
+
+  <tr>
+  <td><code>http</code></td>
+  <td> This entry affects HTTP configuration in LB3. Since in LB4 http configurations are inferred from controller members and the rest server, this field is not applicable.</td>
+  </tr>
+
+  <tr>
+    <td><code>options</code></td>
+    <td>
+      (TBD) see <a href="https://github.com/strongloop/loopback-next/issues/2142">issue #2142</a> for further discussion.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>plural</code></td>
+    <td>This entry is part of HTTP configuration in LB3. So it's not applicable for the same reason as <code>http</code> above.</td>
+  </tr>
+
+  <tr>
+    <td><code>properties</code></td>
+    <td>This entry is no longer being used as we introduced <code>@property</code> decorator in LB4. See <code>@property</code> decorator below to discover moer about how to define properties for your models.</td>
+  </tr>
+
+  <tr>
+    <td><code>relations</code></td>
+    <td>
+      With the introduction of <a href="https://loopback.io/doc/en/lb4/Repositories.html">repositories</a>, now <code>relations</code> are defined by <code>relations decorators</code> in LB4.
+      See <a href="https://loopback.io/doc/en/lb4/Relations.html">Relations</a> for more details.
+    </td>
+  </tr>
+  <tr>
+    <td><code>remoting.<br/>normalizeHttpPath</code></td>
+    <td>
+    This entry is part of HTTP configuration in LB3. So it's not applicable for the same reason as <code>http</code> above.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>replaceOnPUT</code></td>
+    <td>This entry is no longer supported as LB4 controllers scaffolded by LB4 controller, PUT is always calling replaceById. Users are free to change the generated code to call <code>patchById</code> if needed.</td>
+  </tr>
+  </tbody>
+</table>
+
+To discover more about `Model Decorator` in LoopBack 4, please check
+[legacy-juggler-bridge file](https://github.com/strongloop/loopback-next/blob/2fa5df67181cdcd23a5dce90c9c640fe75943cb8/packages/repository/src/repositories/legacy-juggler-bridge.ts)
+and
+[model-builder file](https://github.com/strongloop/loopback-datasource-juggler/blob/master/lib/model-builder.js).
+
+#### Hidden properties
+
+The properties are stored in the database, available in JS/TS code, can be set
+via POST/PUT/PATCH requests, but they are removed from response bodies
+(`.toJSON()` output).
+
+To hide a property, you can use the `hiddenProperties` setting like this:
+
+```ts
+@model({
+  settings: {
+    hiddenProperties: ['password']
+  }
+})
+class MyUserModel extends Entity {
+  @property({id: true})
+  id: number;
+   @property({type: 'string'})
+  email: string;
+   @property({type: 'string'})
+  password: string;
+  ...
+}
+```
 
 ### Property Decorator
+
+<!-- Property decorator can reuse lb3 docs -->
 
 The property decorator takes in the same arguments used in LoopBack 3 for
 individual property entries:
@@ -200,12 +421,42 @@ class Product extends Entity {
     type: 'string',
   })
   public name: string;
+
+  @property({
+    type: 'number',
+    id: true,
+  })
+  id: number;
 }
 ```
 
 The complete list of valid attributes for property definitions can be found in
 LoopBack 3's
 [Model definition section](https://loopback.io/doc/en/lb3/Model-definition-JSON-file.html#properties).
+
+You can also specify the validation rules in the field `jsonSchema`. For
+example:
+
+```ts
+@model()
+class Product extends Entity {
+  @property({
+    name: 'name',
+    description: "The product's common name.",
+    type: 'string',
+    // Specify the JSON validation rules here
+    jsonSchema: {
+      maxLength: 30,
+      minLength: 10,
+    },
+  })
+  public name: string;
+}
+```
+
+Check out the documentation of
+[Parsing requests](Parsing-requests.md#request-body) to see how to do it in
+details.
 
 <!-- NOTE(kjdelisle): Until we have a metadata docs section, link to the
 package in the repository. -->

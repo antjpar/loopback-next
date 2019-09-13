@@ -3,6 +3,592 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.6](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.21.5...@loopback/cli@1.21.6) (2019-09-06)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+## [1.21.5](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.21.4...@loopback/cli@1.21.5) (2019-09-03)
+
+
+### Bug Fixes
+
+* **cli:** belongsto property generation ([82a95d4](https://github.com/strongloop/loopback-next/commit/82a95d4))
+
+
+
+
+
+## [1.21.4](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.21.3...@loopback/cli@1.21.4) (2019-08-19)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+## [1.21.3](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.21.2...@loopback/cli@1.21.3) (2019-08-15)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+## [1.21.2](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.21.1...@loopback/cli@1.21.2) (2019-08-15)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+## [1.21.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.21.0...@loopback/cli@1.21.1) (2019-08-15)
+
+
+### Bug Fixes
+
+* set foreignkey to be optional in the requestbody of hasmany relation ([d46ea18](https://github.com/strongloop/loopback-next/commit/d46ea18))
+
+
+
+
+
+# [1.21.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.20.0...@loopback/cli@1.21.0) (2019-07-31)
+
+
+### Bug Fixes
+
+* add class name separation to multiple class names output ([fc79bf5](https://github.com/strongloop/loopback-next/commit/fc79bf5)), closes [#3350](https://github.com/strongloop/loopback-next/issues/3350)
+
+
+### Features
+
+* **cli:** improve `lb4 service` to generate local service classes/providers ([f743008](https://github.com/strongloop/loopback-next/commit/f743008))
+
+
+
+
+
+# [1.20.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.19.0...@loopback/cli@1.20.0) (2019-07-26)
+
+
+### Bug Fixes
+
+* **cli:** remove -p option from eslint ([d2ffd80](https://github.com/strongloop/loopback-next/commit/d2ffd80))
+* add support for excluding custom pk from POST requests ([9694d99](https://github.com/strongloop/loopback-next/commit/9694d99))
+
+
+### Features
+
+* update examples and docs to use getModelSchemaRef ([99758b1](https://github.com/strongloop/loopback-next/commit/99758b1))
+* **cli:** update templates to make use of getModelSchemaRef ([4147619](https://github.com/strongloop/loopback-next/commit/4147619))
+* remove openapi-v3-types package ([2a93395](https://github.com/strongloop/loopback-next/commit/2a93395))
+
+
+
+
+
+# [1.19.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.18.0...@loopback/cli@1.19.0) (2019-07-17)
+
+
+### Bug Fixes
+
+* **cli:** app generator handles tildified project path. relevant test added ([7f7feaa](https://github.com/strongloop/loopback-next/commit/7f7feaa))
+* **cli:** rearrange interceptor cli prompts ([0b2ed34](https://github.com/strongloop/loopback-next/commit/0b2ed34))
+* fix conflict ([6302101](https://github.com/strongloop/loopback-next/commit/6302101))
+
+
+### Features
+
+* **cli:** modify controller templates to exclude id from POST requests ([4c1ce67](https://github.com/strongloop/loopback-next/commit/4c1ce67))
+* **cli:** store original cli version in .yo.rc.json ([3b7db55](https://github.com/strongloop/loopback-next/commit/3b7db55))
+
+
+
+
+
+# [1.18.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.17.2...@loopback/cli@1.18.0) (2019-06-28)
+
+
+### Bug Fixes
+
+* address violations of "no-floating-promises" rule ([0947531](https://github.com/strongloop/loopback-next/commit/0947531))
+
+
+### Features
+
+* **cli:** enable source map for npm start script ([1882240](https://github.com/strongloop/loopback-next/commit/1882240))
+* **cli:** modify Controller templates to allow partial updates via PATCH ([c7c6695](https://github.com/strongloop/loopback-next/commit/c7c6695))
+
+
+
+
+
+## [1.17.2](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.17.1...@loopback/cli@1.17.2) (2019-06-21)
+
+
+### Bug Fixes
+
+* **cli:** make sure tsbuildinfo is removed by the clean script ([3fdc0b1](https://github.com/strongloop/loopback-next/commit/3fdc0b1))
+* **cli:** remove no-any warning from model template ([264aa28](https://github.com/strongloop/loopback-next/commit/264aa28))
+
+
+
+
+
+## [1.17.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.17.0...@loopback/cli@1.17.1) (2019-06-20)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+# [1.17.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.16.1...@loopback/cli@1.17.0) (2019-06-17)
+
+
+### Bug Fixes
+
+* **cli:** change class/file naming convention. Add prompt msg ([0b2a45b](https://github.com/strongloop/loopback-next/commit/0b2a45b))
+* discover uses owner instead of schema ([ed588b6](https://github.com/strongloop/loopback-next/commit/ed588b6))
+* remove forgotten references to tslint ([faa0a92](https://github.com/strongloop/loopback-next/commit/faa0a92))
+* **cli:** discover prompt exits after generating ([8ba0dd5](https://github.com/strongloop/loopback-next/commit/8ba0dd5))
+
+
+### Features
+
+* **build:** enable incremental compilation ([2120712](https://github.com/strongloop/loopback-next/commit/2120712))
+
+
+
+
+
+## [1.16.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.16.0...@loopback/cli@1.16.1) (2019-06-06)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+# [1.16.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.15.1...@loopback/cli@1.16.0) (2019-06-06)
+
+
+### Features
+
+* **cli:** add lb4 interceptor command to generate interceptors ([58017b6](https://github.com/strongloop/loopback-next/commit/58017b6))
+
+
+
+
+
+## [1.15.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.15.0...@loopback/cli@1.15.1) (2019-06-03)
+
+
+### Bug Fixes
+
+* **cli:** add eslint related dev dependencies to generated package.json ([fc18caf](https://github.com/strongloop/loopback-next/commit/fc18caf))
+
+
+
+
+
+# [1.15.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.14.1...@loopback/cli@1.15.0) (2019-06-03)
+
+
+### Bug Fixes
+
+* **cli:** add type param to Filter and Where ([a9570bc](https://github.com/strongloop/loopback-next/commit/a9570bc))
+
+
+### Features
+
+* add navigational properties to find* methods ([1f0aa0b](https://github.com/strongloop/loopback-next/commit/1f0aa0b))
+* replace tslint with eslint ([44185a7](https://github.com/strongloop/loopback-next/commit/44185a7))
+
+
+
+
+
+## [1.14.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.14.0...@loopback/cli@1.14.1) (2019-05-31)
+
+
+### Bug Fixes
+
+* modelSettings is stringified properly [#2915](https://github.com/strongloop/loopback-next/issues/2915) ([84072ec](https://github.com/strongloop/loopback-next/commit/84072ec))
+
+
+
+
+
+# [1.14.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.13.1...@loopback/cli@1.14.0) (2019-05-30)
+
+
+### Features
+
+* **cli:** add `lb4 relation` command ([75939a4](https://github.com/strongloop/loopback-next/commit/75939a4))
+
+
+
+
+
+## [1.13.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.13.0...@loopback/cli@1.13.1) (2019-05-23)
+
+
+### Bug Fixes
+
+* **cli:** clean up template for life cycle observers ([6733610](https://github.com/strongloop/loopback-next/commit/6733610))
+
+
+
+
+
+# [1.13.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.12.1...@loopback/cli@1.13.0) (2019-05-14)
+
+
+### Features
+
+* add lb3 application ([bf60011](https://github.com/strongloop/loopback-next/commit/bf60011))
+
+
+
+
+
+## [1.12.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.12.0...@loopback/cli@1.12.1) (2019-05-10)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+# [1.12.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.11.3...@loopback/cli@1.12.0) (2019-05-09)
+
+
+### Features
+
+* **cli:** improve scaffolding of complex model settings ([5035c63](https://github.com/strongloop/loopback-next/commit/5035c63))
+
+
+
+
+
+## [1.11.3](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.11.2...@loopback/cli@1.11.3) (2019-05-06)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+## [1.11.2](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.11.1...@loopback/cli@1.11.2) (2019-04-26)
+
+
+### Bug Fixes
+
+* **cli:** escape char sequences for javascript comments ([83ff105](https://github.com/strongloop/loopback-next/commit/83ff105))
+* **cli:** escape identifiers with conflicting name as decorators ([6d71439](https://github.com/strongloop/loopback-next/commit/6d71439))
+
+
+
+
+
+## [1.11.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.11.0...@loopback/cli@1.11.1) (2019-04-20)
+
+
+### Bug Fixes
+
+* **cli:** keep or escape property names for models ([cb308ad](https://github.com/strongloop/loopback-next/commit/cb308ad))
+
+
+
+
+
+# [1.11.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.10.0...@loopback/cli@1.11.0) (2019-04-11)
+
+
+### Bug Fixes
+
+* **cli:** generate operation only for the 1st tag to avoid duplicate routes ([4843a1f](https://github.com/strongloop/loopback-next/commit/4843a1f))
+* **cli:** improve openapi code generation for naming and typing ([af20548](https://github.com/strongloop/loopback-next/commit/af20548))
+
+
+### Features
+
+* **cli:** add lb4 discover for model discovery ([35f719c](https://github.com/strongloop/loopback-next/commit/35f719c))
+* **cli:** normalize variable names for OpenAPI paths ([a3d0dfc](https://github.com/strongloop/loopback-next/commit/a3d0dfc))
+
+
+
+
+
+# [1.10.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.9.0...@loopback/cli@1.10.0) (2019-04-09)
+
+
+### Bug Fixes
+
+* **cli:** make sure the item type is imported for an array in openapi spec ([91b2381](https://github.com/strongloop/loopback-next/commit/91b2381))
+
+
+### Features
+
+* **cli:** add `lb4 observer` command to generate life cycle scripts ([d54651d](https://github.com/strongloop/loopback-next/commit/d54651d))
+
+
+
+
+
+# [1.9.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.8.4...@loopback/cli@1.9.0) (2019-04-05)
+
+
+### Features
+
+* add greeter-extension example ([9b09298](https://github.com/strongloop/loopback-next/commit/9b09298))
+
+
+
+
+
+## [1.8.4](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.8.3...@loopback/cli@1.8.4) (2019-03-22)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+## [1.8.3](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.8.2...@loopback/cli@1.8.3) (2019-03-22)
+
+
+### Bug Fixes
+
+* **build:** remove "dom" from the list of global libraries ([781cd1d](https://github.com/strongloop/loopback-next/commit/781cd1d))
+
+
+
+
+
+## [1.8.2](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.8.1...@loopback/cli@1.8.2) (2019-03-12)
+
+
+### Bug Fixes
+
+* **cli:** setup controller generator after adding properties ([b0ee417](https://github.com/strongloop/loopback-next/commit/b0ee417))
+* **cli:** simplify HTTP server setup in acceptance tests ([aa0e2f7](https://github.com/strongloop/loopback-next/commit/aa0e2f7))
+* **cli:** use pascalCase for toClassName to handle '-' ([861256c](https://github.com/strongloop/loopback-next/commit/861256c))
+
+
+### Performance Improvements
+
+* update dockerfile to better version ([5494243](https://github.com/strongloop/loopback-next/commit/5494243))
+
+
+
+
+
+## [1.8.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.8.0...@loopback/cli@1.8.1) (2019-03-01)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+# [1.8.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.7.0...@loopback/cli@1.8.0) (2019-03-01)
+
+
+### Bug Fixes
+
+* **cli:** fix prompt for base repository class ([b429729](https://github.com/strongloop/loopback-next/commit/b429729)), closes [#2429](https://github.com/strongloop/loopback-next/issues/2429)
+
+
+### Features
+
+* add express example ([dd2400e](https://github.com/strongloop/loopback-next/commit/dd2400e))
+
+
+
+
+
+# [1.7.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.6.0...@loopback/cli@1.7.0) (2019-02-25)
+
+
+### Bug Fixes
+
+* **cli:** do not install deps for built-in connectors ([2e035a5](https://github.com/strongloop/loopback-next/commit/2e035a5))
+* update version of nyc ([f8db27c](https://github.com/strongloop/loopback-next/commit/f8db27c))
+* **cli:** force test host to be HOST env var or ipv4 interface ([1664d4f](https://github.com/strongloop/loopback-next/commit/1664d4f))
+* **cli:** generate property.array for array of simple types ([ec80d9a](https://github.com/strongloop/loopback-next/commit/ec80d9a))
+
+
+### Features
+
+* **cli:** add `--docker` option to generate docker files ([4cd2442](https://github.com/strongloop/loopback-next/commit/4cd2442))
+
+
+
+
+
+# [1.6.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.5.2...@loopback/cli@1.6.0) (2019-02-08)
+
+
+### Bug Fixes
+
+* remove unused juggler import ([0121c10](https://github.com/strongloop/loopback-next/commit/0121c10))
+* update to the most recent lodash version ([65ee865](https://github.com/strongloop/loopback-next/commit/65ee865))
+
+
+### Features
+
+* **cli:** scaffold test files to `src/__tests__` ([d3a3bea](https://github.com/strongloop/loopback-next/commit/d3a3bea))
+* **cli:** use a custom repository base class ([edbbe88](https://github.com/strongloop/loopback-next/commit/edbbe88))
+
+
+
+
+
+## [1.5.2](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.5.1...@loopback/cli@1.5.2) (2019-01-28)
+
+
+### Bug Fixes
+
+* **cli:** add fs-extra dependency as it's used by lb example ([3c74ffa](https://github.com/strongloop/loopback-next/commit/3c74ffa))
+* **cli:** allow base class exist for model config option ([9605ed1](https://github.com/strongloop/loopback-next/commit/9605ed1))
+
+
+
+
+
+## [1.5.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.5.0...@loopback/cli@1.5.1) (2019-01-15)
+
+
+### Bug Fixes
+
+* **cli:** change enable setting check ([f4a9dc0](https://github.com/strongloop/loopback-next/commit/f4a9dc0))
+
+
+
+
+
+# [1.5.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.4.0...@loopback/cli@1.5.0) (2019-01-14)
+
+
+### Bug Fixes
+
+* **cli:** add descriptions to features ([8a94f8f](https://github.com/strongloop/loopback-next/commit/8a94f8f))
+* **cli:** remove license header from test code template ([1fd35f4](https://github.com/strongloop/loopback-next/commit/1fd35f4))
+
+
+### Features
+
+* always include tslint and typescript in project dev-dependencies ([e0df285](https://github.com/strongloop/loopback-next/commit/e0df285))
+* use dependency instead of keyword to check loopback projects ([bb6ee51](https://github.com/strongloop/loopback-next/commit/bb6ee51))
+* **cli:** add property modelSettings ([e0f75ac](https://github.com/strongloop/loopback-next/commit/e0f75ac))
+* **cli:** add strict prompt to model generator ([a68d78b](https://github.com/strongloop/loopback-next/commit/a68d78b))
+
+
+
+
+
+# [1.4.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.3.0...@loopback/cli@1.4.0) (2018-12-20)
+
+
+### Bug Fixes
+
+* **cli:** set `required: true` in property decoration for openapi ([3c37286](https://github.com/strongloop/loopback-next/commit/3c37286))
+
+
+### Features
+
+* **cli:** new projects load tslint config from `[@loopback](https://github.com/loopback)/tslint-config` ([5b9c329](https://github.com/strongloop/loopback-next/commit/5b9c329))
+
+
+
+
+
+# [1.3.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.2.2...@loopback/cli@1.3.0) (2018-12-13)
+
+
+### Bug Fixes
+
+* add model/entity descriptions ([8156f9d](https://github.com/strongloop/loopback-next/commit/8156f9d))
+* **cli:** add missing PUT method in rest controller template ([8394c74](https://github.com/strongloop/loopback-next/commit/8394c74))
+* change service generator ds to uppercase ([83840a3](https://github.com/strongloop/loopback-next/commit/83840a3))
+
+
+### Features
+
+* scaffold DB migration script for new app projects ([f783f07](https://github.com/strongloop/loopback-next/commit/f783f07))
+* **cli:** allow annonymous schemas in openapi to be mapped to models ([eedec1e](https://github.com/strongloop/loopback-next/commit/eedec1e))
+
+
+
+
+
+## [1.2.2](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.2.1...@loopback/cli@1.2.2) (2018-11-26)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+## [1.2.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.2.0...@loopback/cli@1.2.1) (2018-11-17)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+# [1.2.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.1.1...@loopback/cli@1.2.0) (2018-11-17)
+
+
+### Bug Fixes
+
+* **cli:** allow `*` for version range ([0a42541](https://github.com/strongloop/loopback-next/commit/0a42541))
+
+
+### Features
+
+* an extension adding a self-hosted REST API Explorer ([4c165c7](https://github.com/strongloop/loopback-next/commit/4c165c7))
+
+
+
+
+
+## [1.1.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.1.0...@loopback/cli@1.1.1) (2018-11-14)
+
+**Note:** Version bump only for package @loopback/cli
+
+
+
+
+
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.0.1...@loopback/cli@1.1.0) (2018-11-08)
+
+
+### Bug Fixes
+
+* change unmatched html tags, remove redundant 'px' from 0 ([46d08f6](https://github.com/strongloop/loopback-next/commit/46d08f6))
+* **cli:** allow other connectors to be used for repositories ([9a0d9a8](https://github.com/strongloop/loopback-next/commit/9a0d9a8))
+* update usage of `x-ts-type` for schemas ([57c694e](https://github.com/strongloop/loopback-next/commit/57c694e))
+* **cli:** set glob options to support windows paths with special chars ([9a84ef0](https://github.com/strongloop/loopback-next/commit/9a84ef0))
+
+
+### Features
+
+* **cli:** use app.static for default home page ([1dcf169](https://github.com/strongloop/loopback-next/commit/1dcf169))
+
+
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/strongloop/loopback-next/compare/@loopback/cli@1.0.0...@loopback/cli@1.0.1) (2018-10-17)
 

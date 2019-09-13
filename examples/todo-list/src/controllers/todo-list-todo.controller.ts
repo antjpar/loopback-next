@@ -13,6 +13,7 @@ import {
 import {
   del,
   get,
+  getModelSchemaRef,
   getWhereSchemaFor,
   param,
   patch,
@@ -31,15 +32,25 @@ export class TodoListTodoController {
     responses: {
       '200': {
         description: 'TodoList.Todo model instance',
-        content: {'application/json': {'x-ts-type': Todo}},
+        content: {'application/json': {schema: getModelSchemaRef(Todo)}},
       },
     },
   })
   async create(
     @param.path.number('id') id: number,
-    @requestBody() todo: Todo,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Todo, {
+            exclude: ['id'],
+            optional: ['todoListId'],
+          }),
+        },
+      },
+    })
+    todo: Omit<Todo, 'id'>,
   ): Promise<Todo> {
-    return await this.todoListRepo.todos(id).create(todo);
+    return this.todoListRepo.todos(id).create(todo);
   }
 
   @get('/todo-lists/{id}/todos', {
@@ -48,7 +59,7 @@ export class TodoListTodoController {
         description: "Array of Todo's belonging to TodoList",
         content: {
           'application/json': {
-            schema: {type: 'array', items: {'x-ts-type': Todo}},
+            schema: {type: 'array', items: getModelSchemaRef(Todo)},
           },
         },
       },
@@ -56,9 +67,9 @@ export class TodoListTodoController {
   })
   async find(
     @param.path.number('id') id: number,
-    @param.query.string('filter') filter?: Filter,
+    @param.query.object('filter') filter?: Filter<Todo>,
   ): Promise<Todo[]> {
-    return await this.todoListRepo.todos(id).find(filter);
+    return this.todoListRepo.todos(id).find(filter);
   }
 
   @patch('/todo-lists/{id}/todos', {
@@ -71,10 +82,17 @@ export class TodoListTodoController {
   })
   async patch(
     @param.path.number('id') id: number,
-    @requestBody() todo: Partial<Todo>,
-    @param.query.object('where', getWhereSchemaFor(Todo)) where?: Where,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Todo, {partial: true}),
+        },
+      },
+    })
+    todo: Partial<Todo>,
+    @param.query.object('where', getWhereSchemaFor(Todo)) where?: Where<Todo>,
   ): Promise<Count> {
-    return await this.todoListRepo.todos(id).patch(todo, where);
+    return this.todoListRepo.todos(id).patch(todo, where);
   }
 
   @del('/todo-lists/{id}/todos', {
@@ -87,8 +105,8 @@ export class TodoListTodoController {
   })
   async delete(
     @param.path.number('id') id: number,
-    @param.query.object('where', getWhereSchemaFor(Todo)) where?: Where,
+    @param.query.object('where', getWhereSchemaFor(Todo)) where?: Where<Todo>,
   ): Promise<Count> {
-    return await this.todoListRepo.todos(id).delete(where);
+    return this.todoListRepo.todos(id).delete(where);
   }
 }

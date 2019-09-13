@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2017. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -14,10 +14,10 @@ import {Class} from './common-types';
  * the actual reference to the class itself until later, when both sides
  * of the relation are created as JavaScript classes.
  *
- * @template Type The type we are resolving, for example `Entity` or `Product`.
+ * @typeParam Type - The type we are resolving, for example `Entity` or `Product`.
  * This parameter is required.
  *
- * @template StaticMembers The static properties available on the
+ * @typeParam StaticMembers - The static properties available on the
  * type class. For example, all models have static `modelName` property.
  * When `StaticMembers` are not provided, we default to static properties of
  * a `Function` - `name`, `length`, `apply`, `call`, etc.
@@ -31,10 +31,10 @@ export type TypeResolver<
 
 /**
  * A function that checks whether a function is a TypeResolver or not.
- * @param fn The value to check.
+ * @param fn - The value to check.
  */
-export function isTypeResolver<T extends Object>(
-  // tslint:disable-next-line:no-any
+export function isTypeResolver<T extends object>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fn: any,
 ): fn is TypeResolver<T> {
   // 1. A type provider must be a function
@@ -74,7 +74,7 @@ export function isBuiltinType(fn: Function): boolean {
 
 /**
  * Resolve a type value that may have been provided via TypeResolver.
- * @param fn A type class or a type provider.
+ * @param fn - A type class or a type provider.
  * @returns The resolved type.
  */
 export function resolveType<T extends Object>(

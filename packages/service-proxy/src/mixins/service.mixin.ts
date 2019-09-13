@@ -1,9 +1,9 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/service-proxy
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {Provider} from '@loopback/context';
+import {Binding, Provider} from '@loopback/context';
 import {Application} from '@loopback/core';
 
 /**
@@ -11,7 +11,7 @@ import {Application} from '@loopback/core';
  */
 export interface Class<T> {
   // new MyClass(...args) ==> T
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   new (...args: any[]): T;
 }
 
@@ -20,6 +20,7 @@ export interface Class<T> {
  * function to register a service automatically. Also overrides
  * component function to allow it to register repositories automatically.
  *
+ * @example
  * ```ts
  * class MyApplication extends ServiceMixin(Application) {}
  * ```
@@ -28,11 +29,11 @@ export interface Class<T> {
  * called <a href="#ServiceMixinDoc">ServiceMixinDoc</a>
  *
  */
-// tslint:disable-next-line:no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function ServiceMixin<T extends Class<any>>(superClass: T) {
   return class extends superClass {
     // A mixin class has to take in a type any[] argument!
-    // tslint:disable-next-line:no-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(...args: any[]) {
       super(...args);
     }
@@ -40,8 +41,11 @@ export function ServiceMixin<T extends Class<any>>(superClass: T) {
     /**
      * Add a service to this application.
      *
-     * @param provider The service provider to register.
+     * @deprecated Use app.service() instead
      *
+     * @param provider - The service provider to register.
+     *
+     * @example
      * ```ts
      * export interface GeocoderService {
      *   geocode(address: string): Promise<GeoPoint[]>;
@@ -49,7 +53,7 @@ export function ServiceMixin<T extends Class<any>>(superClass: T) {
      *
      * export class GeocoderServiceProvider implements Provider<GeocoderService> {
      *   constructor(
-     *     @inject('datasources.geocoder')
+     *     @inject('services.geocoder')
      *     protected dataSource: juggler.DataSource = new GeocoderDataSource(),
      *   ) {}
      *
@@ -61,20 +65,20 @@ export function ServiceMixin<T extends Class<any>>(superClass: T) {
      * app.serviceProvider(GeocoderServiceProvider);
      * ```
      */
-    serviceProvider<S>(provider: Class<Provider<S>>): void {
-      const serviceName = provider.name.replace(/Provider$/, '');
-      const repoKey = `services.${serviceName}`;
-      this.bind(repoKey)
-        .toProvider(provider)
-        .tag('service');
+    serviceProvider<S>(
+      provider: Class<Provider<S>>,
+      name?: string,
+    ): Binding<S> {
+      return this.service(provider, name);
     }
 
     /**
      * Add a component to this application. Also mounts
      * all the components services.
      *
-     * @param component The component to add.
+     * @param component - The component to add.
      *
+     * @example
      * ```ts
      *
      * export class ProductComponent {
@@ -89,8 +93,8 @@ export function ServiceMixin<T extends Class<any>>(superClass: T) {
      * app.component(ProductComponent);
      * ```
      */
-    public component(component: Class<{}>) {
-      super.component(component);
+    public component(component: Class<unknown>, name?: string) {
+      super.component(component, name);
       this.mountComponentServices(component);
     }
 
@@ -99,9 +103,9 @@ export function ServiceMixin<T extends Class<any>>(superClass: T) {
      * services. This function is intended to be used internally
      * by component()
      *
-     * @param component The component to mount services of
+     * @param component - The component to mount services of
      */
-    mountComponentServices(component: Class<{}>) {
+    mountComponentServices(component: Class<unknown>) {
       const componentKey = `components.${component.name}`;
       const compInstance = this.getSync(componentKey);
 
@@ -118,9 +122,8 @@ export function ServiceMixin<T extends Class<any>>(superClass: T) {
  * Interface for an Application mixed in with ServiceMixin
  */
 export interface ApplicationWithServices extends Application {
-  // tslint:disable-next-line:no-any
-  serviceProvider<S>(provider: Class<Provider<S>>): void;
-  component(component: Class<{}>): void;
+  serviceProvider<S>(provider: Class<Provider<S>>, name?: string): Binding<S>;
+  component(component: Class<{}>, name?: string): Binding;
   mountComponentServices(component: Class<{}>): void;
 }
 
@@ -132,7 +135,7 @@ export interface ApplicationWithServices extends Application {
  * <a href="#ServiceMixin">ServiceMixin</a>
  */
 export class ServiceMixinDoc {
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(...args: any[]) {
     throw new Error(
       'This is a dummy class created for apidoc! Please do not use it!',
@@ -142,8 +145,9 @@ export class ServiceMixinDoc {
   /**
    * Add a service to this application.
    *
-   * @param provider The service provider to register.
+   * @param provider - The service provider to register.
    *
+   * @example
    * ```ts
    * export interface GeocoderService {
    *   geocode(address: string): Promise<GeoPoint[]>;
@@ -163,14 +167,17 @@ export class ServiceMixinDoc {
    * app.serviceProvider(GeocoderServiceProvider);
    * ```
    */
-  serviceProvider<S>(provider: Class<Provider<S>>): void {}
+  serviceProvider<S>(provider: Class<Provider<S>>): Binding<S> {
+    throw new Error();
+  }
 
   /**
    * Add a component to this application. Also mounts
    * all the components services.
    *
-   * @param component The component to add.
+   * @param component - The component to add.
    *
+   * @example
    * ```ts
    *
    * export class ProductComponent {
@@ -185,14 +192,16 @@ export class ServiceMixinDoc {
    * app.component(ProductComponent);
    * ```
    */
-  public component(component: Class<{}>) {}
+  public component(component: Class<unknown>): Binding {
+    throw new Error();
+  }
 
   /**
    * Get an instance of a component and mount all it's
    * services. This function is intended to be used internally
    * by component()
    *
-   * @param component The component to mount services of
+   * @param component - The component to mount services of
    */
-  mountComponentServices(component: Class<{}>) {}
+  mountComponentServices(component: Class<unknown>) {}
 }

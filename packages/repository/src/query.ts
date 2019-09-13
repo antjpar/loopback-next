@@ -1,17 +1,23 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2017,2019. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {AnyObject} from './common-types';
 import * as assert from 'assert';
+import {AnyObject} from './common-types';
 
-// Copyright IBM Corp. 2017. All Rights Reserved.
-// Node module: @loopback/repository
-// This file is licensed under the MIT License.
-// License text available at https://opensource.org/licenses/MIT
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-// tslint:disable:no-any
+const nonWhereFields = [
+  'fields',
+  'order',
+  'limit',
+  'skip',
+  'offset',
+  'include',
+];
+
+const filterFields = ['where', ...nonWhereFields];
 
 /**
  * Operators for where clauses
@@ -24,6 +30,7 @@ export type Operators =
   | 'lt' // <
   | 'lte' // <=
   | 'inq' // IN
+  | 'nin' // NOT IN
   | 'between' // BETWEEN [val1, val2]
   | 'exists'
   | 'and' // AND
@@ -45,6 +52,7 @@ export type PredicateComparison<PT> = {
   lt?: PT;
   lte?: PT;
   inq?: PT[];
+  nin?: PT[];
   between?: [PT, PT];
   exists?: boolean;
   like?: PT;
@@ -70,7 +78,8 @@ export type KeyOf<MT extends object> = Exclude<
 
 /**
  * Condition clause
- * For example:
+ *
+ * @example
  * ```ts
  * {
  *   name: {inq: ['John', 'Mary']},
@@ -82,12 +91,13 @@ export type KeyOf<MT extends object> = Exclude<
 export type Condition<MT extends object> = {
   [P in KeyOf<MT>]?:
     | PredicateComparison<MT[P]> // {x: {lt: 1}}
-    | (MT[P] & ShortHandEqualType) // {x: 1},
+    | (MT[P] & ShortHandEqualType); // {x: 1},
 };
 
 /**
  * Where clause
- * For example:
+ *
+ * @example
  * ```ts
  * {
  *   name: {inq: ['John', 'Mary']},
@@ -97,13 +107,15 @@ export type Condition<MT extends object> = {
  * }
  * ```
  */
-export type Where<MT extends object = AnyObject> = Condition<MT> &
-  Partial<AndClause<MT>> &
-  Partial<OrClause<MT>>;
+export type Where<MT extends object = AnyObject> =
+  | Condition<MT>
+  | AndClause<MT>
+  | OrClause<MT>;
 
 /**
  * And clause
- * For example:
+ *
+ * @example
  * ```ts
  * {
  *   and: [...],
@@ -116,7 +128,8 @@ export interface AndClause<MT extends object> {
 
 /**
  * Or clause
- * For example:
+ *
+ * @example
  * ```ts
  * {
  *   or: [...],
@@ -208,15 +221,6 @@ export function isFilter<MT extends object>(
   candidate: any,
 ): candidate is Filter<MT> {
   if (typeof candidate !== 'object') return false;
-  const filterFields = [
-    'where',
-    'fields',
-    'order',
-    'limit',
-    'skip',
-    'offset',
-    'include',
-  ];
   for (const key in candidate) {
     if (!filterFields.includes(key)) {
       return false;
@@ -252,8 +256,7 @@ export class WhereBuilder<MT extends object = AnyObject> {
       if (k in this.where) {
         // Found conflicting keys, create an `and` operator to join the existing
         // conditions with the new one
-        const where: Where<MT> = {};
-        where.and = [this.where, w];
+        const where = {and: [this.where, w]};
         this.where = where;
         return this;
       }
@@ -264,49 +267,45 @@ export class WhereBuilder<MT extends object = AnyObject> {
   }
 
   /**
+   * @deprecated
+   * Starting from TypeScript 3.2, we don't have to cast any more. This method
+   * should be considered as `deprecated`.
+   *
    * Cast an `and`, `or`, or condition clause to Where
-   * @param clause And/Or/Condition clause
+   * @param clause - And/Or/Condition clause
    */
   cast(clause: AndClause<MT> | OrClause<MT> | Condition<MT>): Where<MT> {
-    const w: Where<MT> = {};
-    if ('and' in clause) {
-      w.and = clause.and;
-    } else if ('or' in clause) {
-      w.or = clause.or;
-    } else {
-      Object.assign(w, clause);
-    }
-    return w;
+    return clause;
   }
 
   /**
    * Add an `and` clause.
-   * @param w One or more where objects
+   * @param w - One or more where objects
    */
   and(...w: (Where<MT> | Where<MT>[])[]): this {
     let clauses: Where<MT>[] = [];
     w.forEach(where => {
       clauses = clauses.concat(Array.isArray(where) ? where : [where]);
     });
-    return this.add(this.cast({and: clauses}));
+    return this.add({and: clauses});
   }
 
   /**
    * Add an `or` clause.
-   * @param w One or more where objects
+   * @param w - One or more where objects
    */
   or(...w: (Where<MT> | Where<MT>[])[]): this {
     let clauses: Where<MT>[] = [];
     w.forEach(where => {
       clauses = clauses.concat(Array.isArray(where) ? where : [where]);
     });
-    return this.add(this.cast({or: clauses}));
+    return this.add({or: clauses});
   }
 
   /**
    * Add an `=` condition
-   * @param key Property name
-   * @param val Property value
+   * @param key - Property name
+   * @param val - Property value
    */
   eq<K extends KeyOf<MT>>(key: K, val: MT[K]): this {
     const w: Where<MT> = {};
@@ -316,8 +315,8 @@ export class WhereBuilder<MT extends object = AnyObject> {
 
   /**
    * Add a `!=` condition
-   * @param key Property name
-   * @param val Property value
+   * @param key - Property name
+   * @param val - Property value
    */
   neq<K extends KeyOf<MT>>(key: K, val: MT[K]): this {
     const w: Where<MT> = {};
@@ -327,8 +326,8 @@ export class WhereBuilder<MT extends object = AnyObject> {
 
   /**
    * Add a `>` condition
-   * @param key Property name
-   * @param val Property value
+   * @param key - Property name
+   * @param val - Property value
    */
   gt<K extends KeyOf<MT>>(key: K, val: MT[K]): this {
     const w: Where<MT> = {};
@@ -338,8 +337,8 @@ export class WhereBuilder<MT extends object = AnyObject> {
 
   /**
    * Add a `>=` condition
-   * @param key Property name
-   * @param val Property value
+   * @param key - Property name
+   * @param val - Property value
    */
   gte<K extends KeyOf<MT>>(key: K, val: MT[K]): this {
     const w: Where<MT> = {};
@@ -349,8 +348,8 @@ export class WhereBuilder<MT extends object = AnyObject> {
 
   /**
    * Add a `<` condition
-   * @param key Property name
-   * @param val Property value
+   * @param key - Property name
+   * @param val - Property value
    */
   lt<K extends KeyOf<MT>>(key: K, val: MT[K]): this {
     const w: Where<MT> = {};
@@ -360,8 +359,8 @@ export class WhereBuilder<MT extends object = AnyObject> {
 
   /**
    * Add a `<=` condition
-   * @param key Property name
-   * @param val Property value
+   * @param key - Property name
+   * @param val - Property value
    */
   lte<K extends KeyOf<MT>>(key: K, val: MT[K]): this {
     const w: Where<MT> = {};
@@ -371,8 +370,8 @@ export class WhereBuilder<MT extends object = AnyObject> {
 
   /**
    * Add a `inq` condition
-   * @param key Property name
-   * @param val An array of property values
+   * @param key - Property name
+   * @param val - An array of property values
    */
   inq<K extends KeyOf<MT>>(key: K, val: MT[K][]): this {
     const w: Where<MT> = {};
@@ -381,10 +380,21 @@ export class WhereBuilder<MT extends object = AnyObject> {
   }
 
   /**
+   * Add a `nin` condition
+   * @param key - Property name
+   * @param val - An array of property values
+   */
+  nin<K extends KeyOf<MT>>(key: K, val: MT[K][]): this {
+    const w: Where<MT> = {};
+    w[key] = {nin: val};
+    return this.add(w);
+  }
+
+  /**
    * Add a `between` condition
-   * @param key Property name
-   * @param val1 Property value lower bound
-   * @param val2 Property value upper bound
+   * @param key - Property name
+   * @param val1 - Property value lower bound
+   * @param val2 - Property value upper bound
    */
   between<K extends KeyOf<MT>>(key: K, val1: MT[K], val2: MT[K]): this {
     const w: Where<MT> = {};
@@ -394,8 +404,8 @@ export class WhereBuilder<MT extends object = AnyObject> {
 
   /**
    * Add a `exists` condition
-   * @param key Property name
-   * @param val Exists or not
+   * @param key - Property name
+   * @param val - Exists or not
    */
   exists<K extends KeyOf<MT>>(key: K, val?: boolean): this {
     const w: Where<MT> = {};
@@ -405,7 +415,7 @@ export class WhereBuilder<MT extends object = AnyObject> {
   /**
    * Add a where object. For conflicting keys with the existing where object,
    * create an `and` clause.
-   * @param where Where filter
+   * @param where - Where filter
    */
   impose(where: Where<MT>): this {
     if (!this.where) {
@@ -449,7 +459,7 @@ export class FilterBuilder<MT extends object = AnyObject> {
 
   /**
    * Set `limit`
-   * @param limit Maximum number of records to be returned
+   * @param limit - Maximum number of records to be returned
    */
   limit(limit: number): this {
     assert(limit >= 1, `Limit ${limit} must a positive number`);
@@ -459,7 +469,7 @@ export class FilterBuilder<MT extends object = AnyObject> {
 
   /**
    * Set `offset`
-   * @param offset Offset of the number of records to be returned
+   * @param offset - Offset of the number of records to be returned
    */
   offset(offset: number): this {
     this.filter.offset = offset;
@@ -476,20 +486,21 @@ export class FilterBuilder<MT extends object = AnyObject> {
 
   /**
    * Describe what fields to be included/excluded
-   * @param f A field name to be included, an array of field names to be
+   * @param f - A field name to be included, an array of field names to be
    * included, or an Fields object for the inclusion/exclusion
    */
   fields(...f: (Fields<MT> | (keyof MT)[] | keyof MT)[]): this {
     if (!this.filter.fields) {
       this.filter.fields = {};
     }
+    const fields = this.filter.fields;
     for (const field of f) {
       if (Array.isArray(field)) {
-        (field as (keyof MT)[]).forEach(i => (this.filter.fields![i] = true));
+        (field as (keyof MT)[]).forEach(i => (fields[i] = true));
       } else if (typeof field === 'string') {
-        this.filter.fields[field as keyof MT] = true;
+        fields[field as keyof MT] = true;
       } else {
-        Object.assign(this.filter.fields, field);
+        Object.assign(fields, field);
       }
     }
     return this;
@@ -501,7 +512,7 @@ export class FilterBuilder<MT extends object = AnyObject> {
 
   /**
    * Describe the sorting order
-   * @param f A field name with optional direction, an array of field names,
+   * @param o - A field name with optional direction, an array of field names,
    * or an Order object for the field/direction pairs
    */
   order(...o: (string | string[] | Order<MT>)[]): this {
@@ -537,7 +548,7 @@ export class FilterBuilder<MT extends object = AnyObject> {
 
   /**
    * Declare `include`
-   * @param i A relation name, an array of relation names, or an `Inclusion`
+   * @param i - A relation name, an array of relation names, or an `Inclusion`
    * object for the relation/scope definitions
    */
   include(...i: (string | string[] | Inclusion<MT>)[]): this {
@@ -558,7 +569,7 @@ export class FilterBuilder<MT extends object = AnyObject> {
 
   /**
    * Declare a where clause
-   * @param w Where object
+   * @param w - Where object
    */
   where(w: Where<MT>): this {
     this.filter.where = w;
@@ -571,7 +582,7 @@ export class FilterBuilder<MT extends object = AnyObject> {
    * properties, throw an error. If it's not a Filter, coerce it to a filter,
    * and carry out the same logic.
    *
-   * @param constraint a constraint object to merge with own filter object
+   * @param constraint - a constraint object to merge with own filter object
    */
   impose(constraint: Filter<MT> | Where<MT>): this {
     if (!this.filter) {
@@ -583,14 +594,6 @@ export class FilterBuilder<MT extends object = AnyObject> {
     } else {
       if (isFilter(constraint)) {
         // throw error if imposed Filter has non-where fields
-        const nonWhereFields = [
-          'fields',
-          'order',
-          'limit',
-          'skip',
-          'offset',
-          'include',
-        ];
         for (const key of Object.keys(constraint)) {
           if (nonWhereFields.includes(key)) {
             throw new Error(
@@ -616,8 +619,8 @@ export class FilterBuilder<MT extends object = AnyObject> {
 
 /**
  * Get nested properties by path
- * @param value Value of an object
- * @param path Path to the property
+ * @param value - Value of an object
+ * @param path - Path to the property
  */
 function getDeepProperty(value: AnyObject, path: string): any {
   const props = path.split('.');

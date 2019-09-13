@@ -19,10 +19,15 @@ async function run(argv, options) {
   const rootPath = project.rootPath;
 
   process.env.LERNA_ROOT_PATH = rootPath;
-  let args = argv.slice(2);
+  const args = argv.slice(2);
 
   return build.runCLI('lerna/cli', args, options);
 }
 
 module.exports = run;
-if (require.main === module) run(process.argv);
+if (require.main === module) {
+  run(process.argv).catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+}

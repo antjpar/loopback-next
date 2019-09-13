@@ -1,9 +1,9 @@
-// Copyright IBM Corp. 2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {ParameterObject, SchemaObject} from '@loopback/openapi-v3-types';
+import {ParameterObject, SchemaObject} from '@loopback/openapi-v3';
 import {RestHttpErrors} from '../';
 
 /**
@@ -31,9 +31,9 @@ export class Validator {
    * The validation executed before type coercion. Like
    * checking absence.
    *
-   * @param type A parameter's type.
-   * @param value A parameter's raw value from http request.
-   * @param opts options
+   * @param type - A parameter's type.
+   * @param value - A parameter's raw value from http request.
+   * @param opts - options
    */
   validateParamBeforeCoercion(
     value: string | object | undefined,
@@ -61,7 +61,7 @@ export class Validator {
    *
    * @param value
    */
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   isAbsent(value: any) {
     if (value === '' || value === undefined) return true;
 

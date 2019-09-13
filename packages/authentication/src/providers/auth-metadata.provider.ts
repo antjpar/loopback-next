@@ -1,26 +1,22 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/authentication
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+import {Constructor, inject, Provider} from '@loopback/context';
 import {CoreBindings} from '@loopback/core';
-import {Constructor, Provider, inject} from '@loopback/context';
-import {
-  AuthenticationMetadata,
-  getAuthenticateMetadata,
-} from '../decorators/authenticate.decorator';
+import {AuthenticationMetadata, getAuthenticateMetadata} from '../decorators';
 
 /**
- * @description Provides authentication metadata of a controller method
- * @example `context.bind('authentication.meta')
- *   .toProvider(AuthMetadataProvider)`
+ * Provides authentication metadata of a controller method
+ * @example `context.bind('authentication.operationMetadata').toProvider(AuthMetadataProvider)`
  */
 export class AuthMetadataProvider
   implements Provider<AuthenticationMetadata | undefined> {
   constructor(
-    @inject(CoreBindings.CONTROLLER_CLASS)
+    @inject(CoreBindings.CONTROLLER_CLASS, {optional: true})
     private readonly controllerClass: Constructor<{}>,
-    @inject(CoreBindings.CONTROLLER_METHOD_NAME)
+    @inject(CoreBindings.CONTROLLER_METHOD_NAME, {optional: true})
     private readonly methodName: string,
   ) {}
 
@@ -28,6 +24,7 @@ export class AuthMetadataProvider
    * @returns AuthenticationMetadata
    */
   value(): AuthenticationMetadata | undefined {
+    if (!this.controllerClass || !this.methodName) return;
     return getAuthenticateMetadata(this.controllerClass, this.methodName);
   }
 }

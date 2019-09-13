@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.0.0](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@0.8.12...@loopback/service-proxy@1.0.0) (2018-10-10)
+## [1.3.5](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.3.4...@loopback/service-proxy@1.3.5) (2019-09-06)
 
 **Note:** Version bump only for package @loopback/service-proxy
 
@@ -11,7 +11,308 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [0.8.12](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@0.8.11...@loopback/service-proxy@0.8.12) (2018-10-09)
+## [1.3.4](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.3.3...@loopback/service-proxy@1.3.4) (2019-09-03)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.3.3](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.3.2...@loopback/service-proxy@1.3.3) (2019-08-19)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.3.2](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.3.1...@loopback/service-proxy@1.3.2) (2019-08-15)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.3.1](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.3.0...@loopback/service-proxy@1.3.1) (2019-08-15)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+# [1.3.0](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.2.7...@loopback/service-proxy@1.3.0) (2019-07-31)
+
+
+### Features
+
+* **core:** add app.service() to register service classes or providers ([88eff77](https://github.com/strongloop/loopback-next/commit/88eff77))
+
+
+
+
+
+## [1.2.7](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.2.6...@loopback/service-proxy@1.2.7) (2019-07-26)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.2.6](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.2.5...@loopback/service-proxy@1.2.6) (2019-07-17)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.2.5](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.2.4...@loopback/service-proxy@1.2.5) (2019-06-28)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.2.4](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.2.3...@loopback/service-proxy@1.2.4) (2019-06-21)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.2.3](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.2.2...@loopback/service-proxy@1.2.3) (2019-06-20)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.2.2](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.2.1...@loopback/service-proxy@1.2.2) (2019-06-17)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.2.1](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.2.0...@loopback/service-proxy@1.2.1) (2019-06-06)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+# [1.2.0](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.13...@loopback/service-proxy@1.2.0) (2019-06-03)
+
+
+### Features
+
+* replace tslint with eslint ([44185a7](https://github.com/strongloop/loopback-next/commit/44185a7))
+
+
+
+
+
+## [1.1.13](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.12...@loopback/service-proxy@1.1.13) (2019-05-31)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.12](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.11...@loopback/service-proxy@1.1.12) (2019-05-30)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.11](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.10...@loopback/service-proxy@1.1.11) (2019-05-23)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.10](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.9...@loopback/service-proxy@1.1.10) (2019-05-14)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.9](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.8...@loopback/service-proxy@1.1.9) (2019-05-10)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.8](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.7...@loopback/service-proxy@1.1.8) (2019-05-09)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.7](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.6...@loopback/service-proxy@1.1.7) (2019-05-06)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.6](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.5...@loopback/service-proxy@1.1.6) (2019-04-26)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.5](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.4...@loopback/service-proxy@1.1.5) (2019-04-20)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.4](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.3...@loopback/service-proxy@1.1.4) (2019-04-11)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.3](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.2...@loopback/service-proxy@1.1.3) (2019-04-09)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.2](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.1...@loopback/service-proxy@1.1.2) (2019-04-05)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.1.1](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.1.0...@loopback/service-proxy@1.1.1) (2019-03-22)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+# [1.1.0](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.0.10...@loopback/service-proxy@1.1.0) (2019-03-22)
+
+
+### Features
+
+* **context:** honor binding scope from [@bind](https://github.com/bind) ([3b30f01](https://github.com/strongloop/loopback-next/commit/3b30f01))
+
+
+
+
+
+## [1.0.10](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.0.9...@loopback/service-proxy@1.0.10) (2019-03-12)
+
+
+### Bug Fixes
+
+* **service-proxy:** change default binding scope to TRANSIENT for service proxies ([c73e8d0](https://github.com/strongloop/loopback-next/commit/c73e8d0))
+
+
+
+
+
+## [1.0.9](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.0.8...@loopback/service-proxy@1.0.9) (2019-02-25)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.0.8](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.0.7...@loopback/service-proxy@1.0.8) (2019-02-08)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.0.7](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.0.6...@loopback/service-proxy@1.0.7) (2019-01-28)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.0.6](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.0.5...@loopback/service-proxy@1.0.6) (2019-01-14)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.0.5](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.0.4...@loopback/service-proxy@1.0.5) (2018-12-20)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.0.4](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.0.3...@loopback/service-proxy@1.0.4) (2018-12-13)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.0.3](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.0.2...@loopback/service-proxy@1.0.3) (2018-11-26)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+## [1.0.2](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.0.1...@loopback/service-proxy@1.0.2) (2018-11-14)
+
+**Note:** Version bump only for package @loopback/service-proxy
+
+
+
+
+
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/strongloop/loopback-next/compare/@loopback/service-proxy@1.0.0...@loopback/service-proxy@1.0.1) (2018-11-08)
 
 **Note:** Version bump only for package @loopback/service-proxy
 

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2017,2019. All Rights Reserved.
 // Node module: @loopback/cli
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -28,7 +28,6 @@ module.exports = class ControllerGenerator extends ArtifactGenerator {
   }
 
   _setupGenerator() {
-    super._setupGenerator();
     this.artifactInfo = {
       type: 'controller',
       rootDir: 'src',
@@ -55,6 +54,8 @@ module.exports = class ControllerGenerator extends ArtifactGenerator {
       required: false,
       description: 'Type for the ' + this.artifactInfo.type,
     });
+
+    return super._setupGenerator();
   }
 
   setOptions() {
@@ -74,6 +75,15 @@ module.exports = class ControllerGenerator extends ArtifactGenerator {
   promptArtifactType() {
     debug('Prompting for controller type');
     if (this.shouldExit()) return;
+
+    super.promptWarningMsgForName();
+    // inform user what controller/file names will be created
+    super.promptClassFileName(
+      'controller',
+      'controllers',
+      utils.toClassName(this.artifactInfo.name),
+    );
+
     return this.prompt([
       {
         type: 'list',
@@ -157,6 +167,13 @@ module.exports = class ControllerGenerator extends ArtifactGenerator {
         validate: utils.validateClassName,
       },
       {
+        type: 'input',
+        name: 'id',
+        message: 'What is the name of ID property?',
+        when: this.artifactInfo.id === undefined,
+        default: 'id',
+      },
+      {
         type: 'list',
         name: 'idType',
         message: 'What is the type of your ID?',
@@ -206,12 +223,11 @@ module.exports = class ControllerGenerator extends ArtifactGenerator {
     if (this.shouldExit()) return false;
     this.artifactInfo.className = utils.toClassName(this.artifactInfo.name);
     this.artifactInfo.outFile =
-      utils.kebabCase(this.artifactInfo.name) + '.controller.ts';
+      utils.toFileName(this.artifactInfo.name) + '.controller.ts';
     if (debug.enabled) {
       debug(`Artifact output filename set to: ${this.artifactInfo.outFile}`);
     }
-
-    this.artifactInfo.modelVariableName = utils.camelCase(
+    this.artifactInfo.modelVariableName = utils.toVarName(
       this.artifactInfo.modelName,
     );
 
@@ -236,13 +252,7 @@ module.exports = class ControllerGenerator extends ArtifactGenerator {
       debug(`artifactInfo: ${inspect(this.artifactInfo)}`);
       debug(`Copying artifact to: ${dest}`);
     }
-    this.fs.copyTpl(
-      source,
-      dest,
-      this.artifactInfo,
-      {},
-      {globOptions: {dot: true}},
-    );
+    this.copyTemplatedFiles(source, dest, this.artifactInfo);
     return;
   }
 

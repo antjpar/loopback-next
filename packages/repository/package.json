@@ -1,47 +1,48 @@
 {
   "name": "@loopback/repository",
-  "version": "1.0.1",
+  "version": "1.13.1",
   "description": "Repository based persistence for LoopBack 4",
   "engines": {
     "node": ">=8.9"
   },
   "main": "index",
   "scripts": {
-    "acceptance": "lb-mocha \"dist/test/acceptance/**/*.js\"",
-    "build:apidocs": "lb-apidocs",
-    "build": "lb-tsc es2017 --outDir dist",
-    "clean": "lb-clean loopback-repository*.tgz dist package api-docs",
+    "acceptance": "lb-mocha \"dist/__tests__/acceptance/**/*.js\"",
+    "build": "lb-tsc",
+    "clean": "lb-clean loopback-repository*.tgz dist tsconfig.build.tsbuildinfo package",
     "pretest": "npm run build",
-    "test": "lb-mocha \"dist/test/**/*.js\"",
+    "test": "lb-mocha \"dist/__tests__/**/*.js\"",
     "verify": "npm pack && tar xf loopback-repository*.tgz && tree package && npm run clean"
   },
-  "author": "IBM",
+  "author": "IBM Corp.",
   "copyright.owner": "IBM Corp.",
   "license": "MIT",
   "devDependencies": {
-    "@loopback/build": "^1.0.0",
-    "@loopback/testlab": "^1.0.0",
-    "@types/lodash": "^4.14.108",
-    "@types/node": "^10.11.2"
+    "@loopback/build": "^2.0.10",
+    "@loopback/eslint-config": "^4.0.2",
+    "@loopback/testlab": "^1.8.0",
+    "@types/lodash": "^4.14.138",
+    "@types/node": "^10.14.18"
   },
   "dependencies": {
-    "@loopback/context": "^1.0.0",
-    "@loopback/core": "^1.0.0",
-    "@types/debug": "0.0.30",
-    "debug": "^4.0.1",
-    "lodash": "^4.17.10",
-    "loopback-datasource-juggler": "^4.0.0"
+    "@loopback/context": "^1.22.1",
+    "@loopback/core": "^1.10.1",
+    "@types/debug": "^4.1.5",
+    "debug": "^4.1.1",
+    "lodash": "^4.17.15",
+    "loopback-datasource-juggler": "^4.12.1"
   },
   "files": [
     "README.md",
     "index.js",
     "index.d.ts",
-    "dist/src",
-    "dist/index*",
-    "src"
+    "dist",
+    "src",
+    "!*/__tests__"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/strongloop/loopback-next.git"
+    "url": "https://github.com/strongloop/loopback-next.git",
+    "directory": "packages/repository"
   }
 }

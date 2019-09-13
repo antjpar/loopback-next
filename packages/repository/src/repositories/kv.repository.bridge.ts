@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -16,9 +16,9 @@ import {juggler, ensurePromise} from './legacy-juggler-bridge';
  * Polyfill for Symbol.asyncIterator
  * See https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-3.html
  */
-// tslint:disable-next-line:no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 if (!(Symbol as any).asyncIterator) {
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (Symbol as any).asyncIterator = Symbol.for('Symbol.asyncIterator');
 }
 
@@ -34,7 +34,7 @@ export class DefaultKeyValueRepository<T extends Entity>
 
   /**
    * Construct a KeyValueRepository with a legacy DataSource
-   * @param ds Legacy DataSource
+   * @param ds - Legacy DataSource
    */
   constructor(
     private entityClass: typeof Entity & {prototype: T},
@@ -59,7 +59,7 @@ export class DefaultKeyValueRepository<T extends Entity>
     if (modelData == null) return modelData;
     let data = modelData;
     if (typeof modelData.toObject === 'function') {
-      // tslint:disable-next-line:no-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       data = (modelData as any).toObject();
     }
     return new this.entityClass(data) as T;

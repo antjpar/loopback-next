@@ -1,22 +1,23 @@
-// Copyright IBM Corp. 2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {ParameterObject, isReferenceObject} from '@loopback/openapi-v3-types';
-import {Validator} from './validator';
+import {isReferenceObject, ParameterObject} from '@loopback/openapi-v3';
 import * as debugModule from 'debug';
 import {RestHttpErrors} from '../';
+import {parseJson} from '../parse-json';
 import {
+  DateCoercionOptions,
   getOAIPrimitiveType,
+  IntegerCoercionOptions,
   isEmpty,
   isFalse,
   isTrue,
   isValidDateTime,
   matchDateFormat,
-  DateCoercionOptions,
-  IntegerCoercionOptions,
 } from './utils';
+import {Validator} from './validator';
 const isRFC3339 = require('validator/lib/isRFC3339');
 const debug = debugModule('loopback:rest:coercion');
 
@@ -24,8 +25,8 @@ const debug = debugModule('loopback:rest:coercion');
  * Coerce the http raw data to a JavaScript type data of a parameter
  * according to its OpenAPI schema specification.
  *
- * @param data The raw data get from http request
- * @param schema The parameter's schema defined in OpenAPI specification
+ * @param data - The raw data get from http request
+ * @param schema - The parameter's schema defined in OpenAPI specification
  */
 export function coerceParameter(
   data: string | undefined | object,
@@ -185,7 +186,7 @@ function parseJsonIfNeeded(
   }
 
   try {
-    const result = JSON.parse(data);
+    const result = parseJson(data);
     debug('Parsed parameter %s as %j', spec.name, result);
     return result;
   } catch (err) {

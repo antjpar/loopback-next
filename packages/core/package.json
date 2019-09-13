@@ -1,42 +1,45 @@
 {
   "name": "@loopback/core",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.10.1",
+  "description": "LoopBack 4 core",
   "engines": {
     "node": ">=8.9"
   },
   "scripts": {
-    "acceptance": "lb-mocha \"dist/test/acceptance/**/*.js\"",
-    "build:apidocs": "lb-apidocs",
-    "build": "lb-tsc es2017 --outDir dist",
-    "clean": "lb-clean loopback-core*.tgz dist package api-docs",
+    "acceptance": "lb-mocha \"dist/__tests__/acceptance/**/*.js\"",
+    "build": "lb-tsc",
+    "clean": "lb-clean loopback-core*.tgz dist tsconfig.build.tsbuildinfo package",
     "pretest": "npm run build",
-    "integration": "lb-mocha \"dist/test/integration/**/*.js\"",
-    "test": "lb-mocha \"dist/test/unit/**/*.js\" \"dist/test/integration/**/*.js\" \"dist/test/acceptance/**/*.js\"",
-    "unit": "lb-mocha \"dist/test/unit/**/*.js\"",
+    "integration": "lb-mocha \"dist/__tests__/integration/**/*.js\"",
+    "test": "lb-mocha \"dist/__tests__/**/*.js\"",
+    "unit": "lb-mocha \"dist/__tests__/unit/**/*.js\"",
     "verify": "npm pack && tar xf loopback-core*.tgz && tree package && npm run clean"
   },
-  "author": "IBM",
+  "author": "IBM Corp.",
   "copyright.owner": "IBM Corp.",
   "license": "MIT",
   "dependencies": {
-    "@loopback/context": "^1.0.0"
+    "@loopback/context": "^1.22.1",
+    "debug": "^4.1.1"
   },
   "devDependencies": {
-    "@loopback/build": "^1.0.0",
-    "@loopback/testlab": "^1.0.0",
-    "@types/node": "^10.11.2"
+    "@loopback/build": "^2.0.10",
+    "@loopback/eslint-config": "^4.0.2",
+    "@loopback/testlab": "^1.8.0",
+    "@types/debug": "^4.1.5",
+    "@types/node": "^10.14.18"
   },
   "files": [
     "README.md",
     "index.js",
     "index.d.ts",
-    "dist/src",
-    "dist/index*",
-    "src"
+    "dist",
+    "src",
+    "!*/__tests__"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/strongloop/loopback-next.git"
+    "url": "https://github.com/strongloop/loopback-next.git",
+    "directory": "packages/core"
   }
 }

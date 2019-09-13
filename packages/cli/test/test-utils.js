@@ -2,13 +2,12 @@
 // Node module: @loopback/cli
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
-
 'use strict';
 
 const yeoman = require('yeoman-environment');
 const path = require('path');
 const helpers = require('yeoman-test');
-const fs = require('fs');
+const fs = require('fs-extra');
 
 exports.testSetUpGen = function(genName, arg) {
   arg = arg || {};
@@ -54,7 +53,7 @@ exports.executeGenerator = function(GeneratorOrNamespace, settings) {
  *
  * @param {string} rootDir Root directory in which to create the project
  * @param {Object} options
- * @property {boolean} excludeKeyword Excludes the 'loopback' keyword in package.json
+ * @property {boolean} excludeLoopbackCore Excludes the '@loopback/core' dependency in package.json
  * @property {boolean} excludePackageJSON Excludes package.json
  * @property {boolean} excludeYoRcJSON Excludes .yo-rc.json
  * @property {boolean} excludeControllersDir Excludes the controllers directory
@@ -70,9 +69,16 @@ exports.givenLBProject = function(rootDir, options) {
   options = options || {};
   const sandBoxFiles = options.additionalFiles || [];
 
-  const content = {};
-  if (!options.excludeKeyword) {
-    content.keywords = ['loopback'];
+  const content = {
+    dependencies: {
+      '@loopback/core': '*',
+    },
+  };
+
+  // We infer if a project is loopback by checking whether its dependencies includes @loopback/core or not.
+  // This flag is created for testing invalid loopback projects.
+  if (options.excludeLoopbackCore) {
+    delete content.dependencies['@loopback/core'];
   }
 
   if (!options.excludePackageJSON) {
@@ -115,9 +121,10 @@ exports.givenLBProject = function(rootDir, options) {
   }
 
   if (sandBoxFiles.length > 0) {
-    for (let theFile of sandBoxFiles) {
+    for (const theFile of sandBoxFiles) {
       const fullPath = path.join(rootDir, theFile.path, theFile.file);
       if (!fs.existsSync(fullPath)) {
+        fs.ensureDirSync(path.dirname(fullPath));
         fs.writeFileSync(fullPath, theFile.content);
       }
     }

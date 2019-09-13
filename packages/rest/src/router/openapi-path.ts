@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2017, 2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -19,7 +19,7 @@ const INVALID_VARNAME_PATTERN = /\{([^\}]*[^\w\}][^\}]*)\}/;
  * Validate the path to be compatible with OpenAPI path template. No parameter
  * modifier, custom pattern, or unnamed parameter is allowed.
  */
-export function validateApiPath(path: string = '/') {
+export function validateApiPath(path = '/') {
   let tokens = pathToRegExp.parse(path);
   if (tokens.some(t => typeof t === 'object')) {
     throw new Error(
@@ -34,7 +34,7 @@ export function validateApiPath(path: string = '/') {
     );
   }
 
-  const regexpPath = path.replace(POSSIBLE_VARNAME_PATTERN, ':$1');
+  const regexpPath = toExpressPath(path);
   tokens = pathToRegExp.parse(regexpPath);
   for (const token of tokens) {
     if (typeof token === 'string') continue;
@@ -42,7 +42,11 @@ export function validateApiPath(path: string = '/') {
       // Such as /(.*)
       throw new Error(`Unnamed parameter is not allowed in path '${path}'`);
     }
-    if (token.optional || token.repeat || token.pattern !== '[^\\/]+?') {
+    if (
+      (token.optional || token.repeat || token.pattern !== '[^\\/]+?') &&
+      // Required by path-to-regexp@3.x
+      token.prefix === '/'
+    ) {
       // Such as /:foo*, /:foo+, /:foo?, or /:foo(\\d+)
       throw new Error(`Parameter modifier is not allowed in path '${path}'`);
     }
@@ -59,8 +63,10 @@ export function getPathVariables(path: string) {
 
 /**
  * Convert an OpenAPI path to Express (path-to-regexp) style
- * @param path OpenAPI path with optional variables as `{var}`
+ * @param path - OpenAPI path with optional variables as `{var}`
  */
 export function toExpressPath(path: string) {
-  return path.replace(POSSIBLE_VARNAME_PATTERN, ':$1');
+  // Convert `.` to `\\.` so that path-to-regexp will treat it as the plain
+  // `.` character
+  return path.replace(POSSIBLE_VARNAME_PATTERN, ':$1').replace('.', '\\.');
 }

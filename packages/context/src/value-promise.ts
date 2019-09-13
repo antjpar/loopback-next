@@ -1,7 +1,8 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
+
 /**
  * This module contains types for values and/or promises as well as a set of
  * utility methods to handle values and/or promises.
@@ -11,10 +12,10 @@
  * A class constructor accepting arbitrary arguments.
  */
 export type Constructor<T> =
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   new (...args: any[]) => T;
 
-// tslint:disable-next-line:no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type BoundValue = any;
 
 /**
@@ -34,7 +35,7 @@ export type MapObject<T> = {[name: string]: T};
  * Check whether a value is a Promise-like instance.
  * Recognizes both native promises and third-party promise libraries.
  *
- * @param value The value to check.
+ * @param value - The value to check.
  */
 export function isPromiseLike<T>(
   value: T | PromiseLike<T> | undefined,
@@ -46,8 +47,8 @@ export function isPromiseLike<T>(
 
 /**
  * Get nested properties of an object by path
- * @param value Value of the source object
- * @param path Path to the property
+ * @param value - Value of the source object
+ * @param path - Path to the property
  */
 export function getDeepProperty<OUT = BoundValue, IN = BoundValue>(
   value: IN,
@@ -86,8 +87,8 @@ export function getDeepProperty<OUT = BoundValue, IN = BoundValue>(
  * ```
  * The `result` will be a promise of `{a: 'X', b: 'Y'}`.
  *
- * @param map The original object containing the source entries
- * @param resolver A function resolves an entry to a value or promise. It will
+ * @param map - The original object containing the source entries
+ * @param resolver - A function resolves an entry to a value or promise. It will
  * be invoked with the property value, the property name, and the source object.
  */
 export function resolveMap<T, V>(
@@ -148,8 +149,8 @@ export function resolveMap<T, V>(
  * ```
  * The `result` will be a promise of `['A', 'B']`.
  *
- * @param list The original array containing the source entries
- * @param resolver A function resolves an entry to a value or promise. It will
+ * @param list - The original array containing the source entries
+ * @param resolver - A function resolves an entry to a value or promise. It will
  * be invoked with the property value, the property index, and the source array.
  */
 export function resolveList<T, V>(
@@ -163,7 +164,6 @@ export function resolveList<T, V>(
     result[index] = val;
   };
 
-  // tslint:disable-next-line:prefer-for-of
   for (let ix = 0; ix < list.length; ix++) {
     const valueOrPromise = resolver(list[ix], ix, list);
     if (isPromiseLike(valueOrPromise)) {
@@ -183,8 +183,8 @@ export function resolveList<T, V>(
 
 /**
  * Try to run an action that returns a promise or a value
- * @param action A function that returns a promise or a value
- * @param finalAction A function to be called once the action
+ * @param action - A function that returns a promise or a value
+ * @param finalAction - A function to be called once the action
  * is fulfilled or rejected (synchronously or asynchronously)
  */
 export function tryWithFinally<T>(
@@ -221,9 +221,9 @@ export function tryWithFinally<T>(
 /**
  * Resolve an iterator of source values into a result until the evaluator
  * returns `true`
- * @param source The iterator of source values
- * @param resolver The resolve function that maps the source value to a result
- * @param evaluator The evaluate function that decides when to stop
+ * @param source - The iterator of source values
+ * @param resolver - The resolve function that maps the source value to a result
+ * @param evaluator - The evaluate function that decides when to stop
  */
 export function resolveUntil<T, V>(
   source: Iterator<T>,
@@ -231,6 +231,7 @@ export function resolveUntil<T, V>(
   evaluator: (sourceVal: T, targetVal: V | undefined) => boolean,
 ): ValueOrPromise<V | undefined> {
   // Do iteration in loop for synchronous values to avoid stack overflow
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const next = source.next();
     if (next.done) return undefined; // End of the iterator
@@ -256,8 +257,8 @@ export function resolveUntil<T, V>(
 /**
  * Transform a value or promise with a function that produces a new value or
  * promise
- * @param valueOrPromise The value or promise
- * @param transformer A function that maps the source value to a value or promise
+ * @param valueOrPromise - The value or promise
+ * @param transformer - A function that maps the source value to a value or promise
  */
 export function transformValueOrPromise<T, V>(
   valueOrPromise: ValueOrPromise<T>,

@@ -1,9 +1,9 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {Getter, isPromiseLike} from '@loopback/context';
+import {Getter} from '@loopback/context';
 import * as assert from 'assert';
 import * as legacy from 'loopback-datasource-juggler';
 import {
@@ -16,55 +16,76 @@ import {
   PositionalParameters,
 } from '../common-types';
 import {EntityNotFoundError} from '../errors';
-import {Entity, ModelDefinition} from '../model';
-import {Filter, Where} from '../query';
+import {Entity, Model, PropertyType} from '../model';
+import {Filter, Inclusion, Where} from '../query';
 import {
+  BelongsToAccessor,
   BelongsToDefinition,
+  createBelongsToAccessor,
+  createHasManyRepositoryFactory,
+  createHasOneRepositoryFactory,
   HasManyDefinition,
   HasManyRepositoryFactory,
-  createHasManyRepositoryFactory,
-  BelongsToAccessor,
-  createBelongsToAccessor,
+  HasOneDefinition,
+  HasOneRepositoryFactory,
+  includeRelatedModels,
+  InclusionResolver,
 } from '../relations';
-import {resolveType} from '../type-resolver';
-import {EntityCrudRepository} from './repository';
+import {IsolationLevel, Transaction} from '../transaction';
+import {isTypeResolver, resolveType} from '../type-resolver';
+import {
+  EntityCrudRepository,
+  TransactionalEntityRepository,
+} from './repository';
 
 export namespace juggler {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   export import DataSource = legacy.DataSource;
   export import ModelBase = legacy.ModelBase;
   export import ModelBaseClass = legacy.ModelBaseClass;
   export import PersistedModel = legacy.PersistedModel;
   export import KeyValueModel = legacy.KeyValueModel;
   export import PersistedModelClass = legacy.PersistedModelClass;
+  // eslint-disable-next-line no-shadow
+  export import Transaction = legacy.Transaction;
+  // eslint-disable-next-line no-shadow
+  export import IsolationLevel = legacy.IsolationLevel;
+}
+
+function isModelClass(
+  propertyType: PropertyType | undefined,
+): propertyType is typeof Model {
+  return (
+    !isTypeResolver(propertyType) &&
+    typeof propertyType === 'function' &&
+    typeof (propertyType as typeof Model).definition === 'object' &&
+    propertyType.toString().startsWith('class ')
+  );
 }
 
 /**
  * This is a bridge to the legacy DAO class. The function mixes DAO methods
  * into a model class and attach it to a given data source
- * @param modelClass {} Model class
- * @param ds {DataSource} Data source
+ * @param modelClass - Model class
+ * @param ds - Data source
  * @returns {} The new model class with DAO (CRUD) operations
  */
 export function bindModel<T extends juggler.ModelBaseClass>(
   modelClass: T,
   ds: juggler.DataSource,
 ): T {
-  const boundModelClass = class extends modelClass {};
-  boundModelClass.attachTo(ds);
-  return boundModelClass;
+  const BoundModelClass = class extends modelClass {};
+  BoundModelClass.attachTo(ds);
+  return BoundModelClass;
 }
 
 /**
  * Ensure the value is a promise
- * @param p Promise or void
+ * @param p - Promise or void
  */
-/* tslint:disable-next-line:no-any */
 export function ensurePromise<T>(p: legacy.PromiseOrVoid<T>): Promise<T> {
-  if (p && isPromiseLike(p)) {
-    // Juggler uses promise-like Bluebird instead of native Promise
-    // implementation. We need to convert the promise returned by juggler
-    // methods to proper native Promise instance.
-    return Promise.resolve(p);
+  if (p && p instanceof Promise) {
+    return p;
   } else {
     return Promise.reject(new Error('The value should be a Promise: ' + p));
   }
@@ -74,14 +95,22 @@ export function ensurePromise<T>(p: legacy.PromiseOrVoid<T>): Promise<T> {
  * Default implementation of CRUD repository using legacy juggler model
  * and data source
  */
-export class DefaultCrudRepository<T extends Entity, ID>
-  implements EntityCrudRepository<T, ID> {
+export class DefaultCrudRepository<
+  T extends Entity,
+  ID,
+  Relations extends object = {}
+> implements EntityCrudRepository<T, ID, Relations> {
   modelClass: juggler.PersistedModelClass;
+
+  public readonly inclusionResolvers: Map<
+    string,
+    InclusionResolver<T, Entity>
+  > = new Map();
 
   /**
    * Constructor of DefaultCrudRepository
-   * @param modelClass Legacy model class
-   * @param dataSource Legacy data source
+   * @param entityClass - Legacy entity class
+   * @param dataSource - Legacy data source
    */
   constructor(
     // entityClass should have type "typeof T", but that's not supported by TSC
@@ -93,24 +122,30 @@ export class DefaultCrudRepository<T extends Entity, ID>
       !!definition,
       `Entity ${entityClass.name} must have valid model definition.`,
     );
-
     assert(
       definition.idProperties().length > 0,
       `Entity ${entityClass.name} must have at least one id/pk property.`,
     );
 
-    this.setupPersistedModel(definition);
+    this.modelClass = this.definePersistedModel(entityClass);
   }
 
   // Create an internal legacy Model attached to the datasource
-  private setupPersistedModel(definition: ModelDefinition) {
+  private definePersistedModel(
+    entityClass: typeof Model,
+  ): typeof juggler.PersistedModel {
+    const definition = entityClass.definition;
+    assert(
+      !!definition,
+      `Entity ${entityClass.name} must have valid model definition.`,
+    );
+
     const dataSource = this.dataSource;
 
     const model = dataSource.getModel(definition.name);
     if (model) {
       // The backing persisted model has been already defined.
-      this.modelClass = model as typeof juggler.PersistedModel;
-      return;
+      return model as typeof juggler.PersistedModel;
     }
 
     // We need to convert property definitions from PropertyDefinition
@@ -120,15 +155,21 @@ export class DefaultCrudRepository<T extends Entity, ID>
     // We need to convert PropertyDefinition into the definition that
     // the juggler understands
     Object.entries(definition.properties).forEach(([key, value]) => {
+      // always clone value so that we do not modify the original model definition
+      // ensures that model definitions can be reused with multiple datasources
       if (value.type === 'array' || value.type === Array) {
-        value = Object.assign({}, value, {type: [resolveType(value.itemType)]});
+        value = Object.assign({}, value, {
+          type: [value.itemType && this.resolvePropertyType(value.itemType)],
+        });
         delete value.itemType;
+      } else {
+        value = Object.assign({}, value, {
+          type: this.resolvePropertyType(value.type),
+        });
       }
-      value.type = resolveType(value.type);
       properties[key] = Object.assign({}, value);
     });
-
-    this.modelClass = dataSource.createModel<juggler.PersistedModelClass>(
+    const modelClass = dataSource.createModel<juggler.PersistedModelClass>(
       definition.name,
       properties,
       Object.assign(
@@ -140,16 +181,49 @@ export class DefaultCrudRepository<T extends Entity, ID>
         {strictDelete: false},
       ),
     );
-    this.modelClass.attachTo(dataSource);
+    modelClass.attachTo(dataSource);
+    return modelClass;
+  }
+
+  private resolvePropertyType(type: PropertyType): PropertyType {
+    const resolved = resolveType(type);
+    return isModelClass(resolved)
+      ? this.definePersistedModel(resolved)
+      : resolved;
+  }
+
+  /**
+   * @deprecated
+   * Function to create a constrained relation repository factory
+   *
+   * Use `this.createHasManyRepositoryFactoryFor()` instead
+   *
+   * @param relationName - Name of the relation defined on the source model
+   * @param targetRepo - Target repository instance
+   */
+  protected _createHasManyRepositoryFactoryFor<
+    Target extends Entity,
+    TargetID,
+    ForeignKeyType
+  >(
+    relationName: string,
+    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>,
+  ): HasManyRepositoryFactory<Target, ForeignKeyType> {
+    return this.createHasManyRepositoryFactoryFor(
+      relationName,
+      targetRepoGetter,
+    );
   }
 
   /**
    * Function to create a constrained relation repository factory
    *
+   * @example
    * ```ts
    * class CustomerRepository extends DefaultCrudRepository<
    *   Customer,
-   *   typeof Customer.prototype.id
+   *   typeof Customer.prototype.id,
+   *   CustomerRelations
    * > {
    *   public readonly orders: HasManyRepositoryFactory<Order, typeof Customer.prototype.id>;
    *
@@ -166,10 +240,10 @@ export class DefaultCrudRepository<T extends Entity, ID>
    * }
    * ```
    *
-   * @param relationName Name of the relation defined on the source model
-   * @param targetRepo Target repository instance
+   * @param relationName - Name of the relation defined on the source model
+   * @param targetRepo - Target repository instance
    */
-  protected _createHasManyRepositoryFactoryFor<
+  protected createHasManyRepositoryFactoryFor<
     Target extends Entity,
     TargetID,
     ForeignKeyType
@@ -184,7 +258,29 @@ export class DefaultCrudRepository<T extends Entity, ID>
     );
   }
 
+  /**
+   * @deprecated
+   * Function to create a belongs to accessor
+   *
+   * Use `this.createBelongsToAccessorFor()` instead
+   *
+   * @param relationName - Name of the relation defined on the source model
+   * @param targetRepo - Target repository instance
+   */
   protected _createBelongsToAccessorFor<Target extends Entity, TargetId>(
+    relationName: string,
+    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetId>>,
+  ): BelongsToAccessor<Target, ID> {
+    return this.createBelongsToAccessorFor(relationName, targetRepoGetter);
+  }
+
+  /**
+   * Function to create a belongs to accessor
+   *
+   * @param relationName - Name of the relation defined on the source model
+   * @param targetRepo - Target repository instance
+   */
+  protected createBelongsToAccessorFor<Target extends Entity, TargetId>(
     relationName: string,
     targetRepoGetter: Getter<EntityCrudRepository<Target, TargetId>>,
   ): BelongsToAccessor<Target, ID> {
@@ -193,6 +289,48 @@ export class DefaultCrudRepository<T extends Entity, ID>
       meta as BelongsToDefinition,
       targetRepoGetter,
       this,
+    );
+  }
+
+  /**
+   * @deprecated
+   * Function to create a constrained hasOne relation repository factory
+   *
+   * @param relationName - Name of the relation defined on the source model
+   * @param targetRepo - Target repository instance
+   */
+  protected _createHasOneRepositoryFactoryFor<
+    Target extends Entity,
+    TargetID,
+    ForeignKeyType
+  >(
+    relationName: string,
+    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>,
+  ): HasOneRepositoryFactory<Target, ForeignKeyType> {
+    return this.createHasOneRepositoryFactoryFor(
+      relationName,
+      targetRepoGetter,
+    );
+  }
+
+  /**
+   * Function to create a constrained hasOne relation repository factory
+   *
+   * @param relationName - Name of the relation defined on the source model
+   * @param targetRepo - Target repository instance
+   */
+  protected createHasOneRepositoryFactoryFor<
+    Target extends Entity,
+    TargetID,
+    ForeignKeyType
+  >(
+    relationName: string,
+    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>,
+  ): HasOneRepositoryFactory<Target, ForeignKeyType> {
+    const meta = this.entityClass.definition.relations[relationName];
+    return createHasOneRepositoryFactory<Target, TargetID, ForeignKeyType>(
+      meta as HasOneDefinition,
+      targetRepoGetter,
     );
   }
 
@@ -218,29 +356,55 @@ export class DefaultCrudRepository<T extends Entity, ID>
     }
   }
 
-  async find(filter?: Filter<T>, options?: Options): Promise<T[]> {
+  async find(
+    filter?: Filter<T>,
+    options?: Options,
+  ): Promise<(T & Relations)[]> {
+    const include = filter && filter.include;
     const models = await ensurePromise(
-      this.modelClass.find(filter as legacy.Filter, options),
+      this.modelClass.find(this.normalizeFilter(filter), options),
     );
-    return this.toEntities(models);
+    const entities = this.toEntities(models);
+    return this.includeRelatedModels(entities, include, options);
   }
 
-  async findOne(filter?: Filter<T>, options?: Options): Promise<T | null> {
+  async findOne(
+    filter?: Filter<T>,
+    options?: Options,
+  ): Promise<(T & Relations) | null> {
     const model = await ensurePromise(
-      this.modelClass.findOne(filter as legacy.Filter, options),
+      this.modelClass.findOne(this.normalizeFilter(filter), options),
     );
     if (!model) return null;
-    return this.toEntity(model);
+    const entity = this.toEntity(model);
+    const include = filter && filter.include;
+    const resolved = await this.includeRelatedModels(
+      [entity],
+      include,
+      options,
+    );
+    return resolved[0];
   }
 
-  async findById(id: ID, filter?: Filter<T>, options?: Options): Promise<T> {
+  async findById(
+    id: ID,
+    filter?: Filter<T>,
+    options?: Options,
+  ): Promise<T & Relations> {
+    const include = filter && filter.include;
     const model = await ensurePromise(
-      this.modelClass.findById(id, filter as legacy.Filter, options),
+      this.modelClass.findById(id, this.normalizeFilter(filter), options),
     );
     if (!model) {
       throw new EntityNotFoundError(this.entityClass, id);
     }
-    return this.toEntity(model);
+    const entity = this.toEntity(model);
+    const resolved = await this.includeRelatedModels(
+      [entity],
+      include,
+      options,
+    );
+    return resolved[0];
   }
 
   update(entity: T, options?: Options): Promise<void> {
@@ -317,19 +481,80 @@ export class DefaultCrudRepository<T extends Entity, ID>
 
   async execute(
     command: Command,
-    // tslint:disable:no-any
     parameters: NamedParameters | PositionalParameters,
     options?: Options,
   ): Promise<AnyObject> {
-    /* istanbul ignore next */
-    throw new Error('Not implemented');
+    return ensurePromise(this.dataSource.execute(command, parameters, options));
   }
 
-  protected toEntity(model: juggler.PersistedModel): T {
-    return new this.entityClass(model.toObject()) as T;
+  protected toEntity<R extends T>(model: juggler.PersistedModel): R {
+    return new this.entityClass(model.toObject()) as R;
   }
 
-  protected toEntities(models: juggler.PersistedModel[]): T[] {
-    return models.map(m => this.toEntity(m));
+  protected toEntities<R extends T>(models: juggler.PersistedModel[]): R[] {
+    return models.map(m => this.toEntity<R>(m));
+  }
+
+  /**
+   * Register an inclusion resolver for the related model name.
+   *
+   * @param relationName - Name of the relation defined on the source model
+   * @param resolver - Resolver function for getting related model entities
+   */
+  registerInclusionResolver(
+    relationName: string,
+    resolver: InclusionResolver<T, Entity>,
+  ) {
+    this.inclusionResolvers.set(relationName, resolver);
+  }
+
+  /**
+   * Returns model instances that include related models of this repository
+   * that have a registered resolver.
+   *
+   * @param entities - An array of entity instances or data
+   * @param include -Inclusion filter
+   * @param options - Options for the operations
+   */
+  protected async includeRelatedModels(
+    entities: T[],
+    include?: Inclusion<T>[],
+    options?: Options,
+  ): Promise<(T & Relations)[]> {
+    return includeRelatedModels<T, Relations>(this, entities, include, options);
+  }
+
+  /**
+   * Removes juggler's "include" filter as it does not apply to LoopBack 4
+   * relations.
+   *
+   * @param filter - Query filter
+   */
+  protected normalizeFilter(filter?: Filter<T>): legacy.Filter | undefined {
+    if (!filter) return undefined;
+    return {...filter, include: undefined} as legacy.Filter;
+  }
+}
+
+/**
+ * Default implementation of CRUD repository using legacy juggler model
+ * and data source with beginTransaction() method for connectors which
+ * support Transactions
+ */
+
+export class DefaultTransactionalRepository<
+  T extends Entity,
+  ID,
+  Relations extends object = {}
+> extends DefaultCrudRepository<T, ID, Relations>
+  implements TransactionalEntityRepository<T, ID, Relations> {
+  async beginTransaction(
+    options?: IsolationLevel | Options,
+  ): Promise<Transaction> {
+    const dsOptions: juggler.IsolationLevel | Options = options || {};
+    // juggler.Transaction still has the Promise/Callback variants of the
+    // Transaction methods
+    // so we need it cast it back
+    return (await this.dataSource.beginTransaction(dsOptions)) as Transaction;
   }
 }

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/example-todo-list
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -8,6 +8,7 @@ import {
   del,
   get,
   getFilterSchemaFor,
+  getModelSchemaRef,
   param,
   patch,
   post,
@@ -24,27 +25,41 @@ export class TodoController {
     responses: {
       '200': {
         description: 'Todo model instance',
-        content: {'application/json': {'x-ts-type': Todo}},
+        content: {'application/json': {schema: getModelSchemaRef(Todo)}},
       },
     },
   })
-  async createTodo(@requestBody() todo: Todo) {
-    return await this.todoRepo.create(todo);
+  async createTodo(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Todo, {exclude: ['id']}),
+        },
+      },
+    })
+    todo: Omit<Todo, 'id'>,
+  ): Promise<Todo> {
+    return this.todoRepo.create(todo);
   }
 
   @get('/todos/{id}', {
     responses: {
       '200': {
         description: 'Todo model instance',
-        content: {'application/json': {'x-ts-type': Todo}},
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(Todo, {includeRelations: true}),
+          },
+        },
       },
     },
   })
   async findTodoById(
     @param.path.number('id') id: number,
-    @param.query.boolean('items') items?: boolean,
+    @param.query.object('filter', getFilterSchemaFor(Todo))
+    filter?: Filter<Todo>,
   ): Promise<Todo> {
-    return await this.todoRepo.findById(id);
+    return this.todoRepo.findById(id, filter);
   }
 
   @get('/todos', {
@@ -53,16 +68,20 @@ export class TodoController {
         description: 'Array of Todo model instances',
         content: {
           'application/json': {
-            schema: {type: 'array', items: {'x-ts-type': Todo}},
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(Todo, {includeRelations: true}),
+            },
           },
         },
       },
     },
   })
   async findTodos(
-    @param.query.object('filter', getFilterSchemaFor(Todo)) filter?: Filter,
+    @param.query.object('filter', getFilterSchemaFor(Todo))
+    filter?: Filter<Todo>,
   ): Promise<Todo[]> {
-    return await this.todoRepo.find(filter);
+    return this.todoRepo.find(filter);
   }
 
   @put('/todos/{id}', {
@@ -88,7 +107,14 @@ export class TodoController {
   })
   async updateTodo(
     @param.path.number('id') id: number,
-    @requestBody() todo: Todo,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Todo, {partial: true}),
+        },
+      },
+    })
+    todo: Partial<Todo>,
   ): Promise<void> {
     await this.todoRepo.updateById(id, todo);
   }
@@ -108,11 +134,11 @@ export class TodoController {
     responses: {
       '200': {
         description: 'TodoList model instance',
-        content: {'application/json': {'x-ts-type': TodoList}},
+        content: {'application/json': {schema: getModelSchemaRef(TodoList)}},
       },
     },
   })
   async findOwningList(@param.path.number('id') id: number): Promise<TodoList> {
-    return await this.todoRepo.todoList(id);
+    return this.todoRepo.todoList(id);
   }
 }

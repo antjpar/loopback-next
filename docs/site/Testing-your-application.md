@@ -103,7 +103,7 @@ database is not something we want to clean before each test it's handy to use an
 independent in-memory datasource which is filled appropriately using
 [test data builders](#use-test-data-builders) before each test run.
 
-{% include code-caption.html content="test/fixtures/datasources/testdb.datasource.ts" %}
+{% include code-caption.html content="src/__tests__/fixtures/datasources/testdb.datasource.ts" %}
 
 ```ts
 import {juggler} from '@loopback/repository';
@@ -126,7 +126,7 @@ database in the state that caused the test to fail.
 To clean the database before each test, set up a `beforeEach` hook to call a
 helper method; for example:
 
-{% include code-caption.html content="test/helpers/database.helpers.ts" %}
+{% include code-caption.html content="src/__tests__/helpers/database.helpers.ts" %}
 
 ```ts
 import {ProductRepository, CategoryRepository} from '../../src/repositories';
@@ -138,7 +138,36 @@ export async function givenEmptyDatabase() {
 }
 ```
 
-{% include code-caption.html content="test/integration/controllers/product.controller.integration.ts" %}
+In case a repository includes a relation to another repository, ie. Product
+belongs to Category, include it in the repository call, for example:
+
+{% include code-caption.html content="src/__tests__/helpers/database.helpers.ts" %}
+
+```ts
+import {Getter} from '@loopback/context';
+import {ProductRepository, CategoryRepository} from '../../src/repositories';
+import {testdb} from '../fixtures/datasources/testdb.datasource';
+
+export async function givenEmptyDatabase() {
+  let categoryRepository: CategoryRepository;
+  let productRepository: ProductRepository;
+
+  categoryRepository = new CategoryRepository(
+    testdb,
+    async () => productRepository,
+  );
+
+  productRepository = new ProductRepository(
+    testdb,
+    async () => categoryRepository,
+  );
+
+  await productRepository.deleteAll();
+  await categoryRepository.deleteAll();
+}
+```
+
+{% include code-caption.html content="src/__tests__/integration/controllers/product.controller.integration.ts" %}
 
 ```ts
 // in your test file
@@ -176,7 +205,7 @@ documents.
 In practice, a simple function that adds missing required properties is
 sufficient.
 
-{% include code-caption.html content="test/helpers/database.helpers.ts" %}
+{% include code-caption.html content="src/__tests__/helpers/database.helpers.ts" %}
 
 ```ts
 // ...
@@ -194,7 +223,7 @@ export function givenProductData(data?: Partial<Product>) {
 }
 
 export async function givenProduct(data?: Partial<Product>) {
-  return await new ProductRepository(testdb).create(givenProductData(data));
+  return new ProductRepository(testdb).create(givenProductData(data));
 }
 // ...
 ```
@@ -386,7 +415,7 @@ Verify how was the stubbed method executed at the end of your unit test (in the
 ```ts
 // expect that repository.find() was called with the first
 // argument deeply-equal to the provided object
-sinon.assert.calledWithMatch({where: {id: 1}});
+sinon.assert.calledWithMatch(findStub, {where: {id: 1}});
 ```
 
 See [Unit test your controllers](#unit-test-your-controllers) for a full
@@ -394,9 +423,64 @@ example.
 
 #### Create a stub Service
 
-{% include content/tbd.html %}
+If your controller relies on service proxy for service oriented backends such as
+REST APIs, SOAP Web Services, or gRPC microservices, then we can create stubs
+for the service akin to the steps outlined in the above
+[stub repository](#create-a-stub-repository) section. Consider a dependency on a
+`GeoCoder` service that relies on a remote REST API for returning coordinates
+for a specific address.
 
-The initial beta release does not include Services as a first-class feature.
+```ts
+export interface GeocoderService {
+  geocode(address: string): Promise<GeoPoint[]>;
+}
+```
+
+The first step is to create a mocked instance of the `GeocoderService` API and
+configure its `geocode` method as a Sinon stub:
+
+```ts
+describe('GeocoderController', () => {
+  let geoService: GeoCoderService;
+  let geocode: sinon.SinonStub;
+
+  beforeEach(givenMockGeoCoderService);
+
+  // your unit tests
+
+  function givenMockGeoCoderService() {
+    // this creates a stub with GeocoderService API
+    // in a way that allows the compiler to verify type correctness
+    geoService = {geocode: sinon.stub()};
+
+    // this creates a reference to the stubbed "geocode" method
+    // because "geoService.geocode" has type from GeocoderService
+    // and does not provide Sinon APIs
+    geocode = geoService.geocode as sinon.SinonStub;
+  }
+});
+```
+
+Afterwards, we can configure the `geocode` stub's behaviour before the `act`
+phase of our test(s):
+
+```ts
+// geoService.geocode() will return a promise that
+// will be resolved with the provided array
+geocode.resolves([<GeoPoint>{y: 41.109653, x: -73.72467}]);
+```
+
+Lastly, we'll verify how the stub was executed:
+
+```ts
+// expect that geoService.geocode() was called with the first
+// argument equal to the provided address string
+sinon.assert.calledWithMatch(geocode, '1 New Orchard Road, Armonk, 10504');
+```
+
+Check out
+[TodoController unit tests](https://github.com/strongloop/loopback-next/blob/bd0c45033503f631a533ad6176620354d9cf6768/examples/todo/src/__tests__/unit/controllers/todo.controller.unit.ts#L53-L71)
+illustrating the above points in action for more information.
 
 ### Unit test your Controllers
 
@@ -404,37 +488,44 @@ Unit tests should apply to the smallest piece of code possible to ensure that
 other variables and state changes do not pollute the result. A typical unit test
 creates a controller instance with dependencies replaced by test doubles and
 directly calls the tested method. The example below gives the controller a stub
-implementation of its repository dependency, ensures the controller calls the
-repository's `find()` method with a correct query, and returns back the query
-results. See [Create a stub repository](#create-a-stub-repository) for a
-detailed explanation.
+implementation of its repository dependency using the `testlab`
+`createStubInstance` function, ensures the controller calls the repository's
+`find()` method with a correct query, and returns back the query results. See
+[Create a stub repository](#create-a-stub-repository) for a detailed
+explanation.
 
-{% include code-caption.html content="test/unit/controllers/product.controller.unit.ts" %}
+{% include code-caption.html content="src/__tests__/unit/controllers/product.controller.unit.ts" %}
 
 ```ts
-import {expect, sinon} from '@loopback/testlab';
+import {
+  createStubInstance,
+  expect,
+  sinon,
+  StubbedInstanceWithSinonAccessor,
+} from '@loopback/testlab';
 import {ProductRepository} from '../../../src/repositories';
 import {ProductController} from '../../../src/controllers';
 
 describe('ProductController (unit)', () => {
-  let repository: ProductRepository;
+  let repository: StubbedInstanceWithSinonAccessor<ProductRepository>;
   beforeEach(givenStubbedRepository);
 
   describe('getDetails()', () => {
     it('retrieves details of a product', async () => {
       const controller = new ProductController(repository);
-      const findStub = repository.find as sinon.SinonStub;
-      findStub.resolves([{name: 'Pen', slug: 'pen'}]);
+      repository.stubs.find.resolves([{name: 'Pen', slug: 'pen'}]);
 
       const details = await controller.getDetails('pen');
 
       expect(details).to.containEql({name: 'Pen', slug: 'pen'});
-      sinon.assert.calledWithMatch(findStub, {where: {slug: 'pen'}});
+      sinon.assert.calledWithMatch(repository.stubs.find, {
+        where: {slug: 'pen'},
+      });
     });
   });
 
   function givenStubbedRepository() {
-    repository = sinon.createStubInstance(ProductRepository);
+    repository = createStubInstance(ProductRepository);
   }
 });
 ```
@@ -453,7 +544,7 @@ unit tests to verify the implementation of this additional method.
 Remember to use [Test data builders](#use-test-data-builders) whenever you need
 valid data to create a new model instance.
 
-{% include code-caption.html content="test/unit/models/person.model.unit.ts" %}
+{% include code-caption.html content="src/__tests__/unit/models/person.model.unit.ts" %}
 
 ```ts
 import {Person} from '../../../src/models';
@@ -540,7 +631,7 @@ Integration tests are one of the places to put the best practices in
 Here is an example showing how to write an integration test for a custom
 repository method `findByName`:
 
-{% include code-caption.html content="test/integration/repositories/category.repository.integration.ts" %}
+{% include code-caption.html content="src/__tests__/integration/repositories/category.repository.integration.ts" %}
 
 ```ts
 import {
@@ -575,7 +666,7 @@ commands and queries produce expected results when executed on a real database.
 These tests are similar to repository tests with controllers added as another
 ingredient.
 
-{% include code-caption.html content="test/integration/controllers/product.controller.integration.ts" %}
+{% include code-caption.html content="src/__tests__/integration/controllers/product.controller.integration.ts" %}
 
 ```ts
 import {expect} from '@loopback/testlab';
@@ -713,10 +804,9 @@ provides a helper method `validateApiSpec` that builds on top of the popular
 
 Example usage:
 
-{% include code-caption.html content= "test/acceptance/api-spec.acceptance.ts" %}
+{% include code-caption.html content= "src/__tests__/acceptance/api-spec.acceptance.ts" %}
 
 ```ts
-// test/acceptance/api-spec.test.ts
 import {HelloWorldApplication} from '../..';
 import {RestServer} from '@loopback/rest';
 import {validateApiSpec} from '@loopback/testlab';
@@ -735,8 +825,10 @@ describe('API specification', () => {
 
 {% include important.html content=" The top-down approach for building LoopBack
 applications is not yet fully supported. Therefore, the code outlined in this
-section is outdated and may not work out of the box. It will be revisitedafter
-our MVP release.
+section is outdated and may not work out of the box. Check out
+https://github.com/strongloop/loopback-next/issues/1882 for the epic tracking
+the feature and [OpenAPI generator](OpenAPI-generator.md) page for artifact
+generation from OpenAPI specs.
 " %}
 
 The formal validity of your application's spec does not guarantee that your
@@ -756,7 +848,7 @@ developers consuming your API will find them useful too.
 
 Here is an example showing how to run Dredd to test your API against the spec:
 
-{% include code-caption.html content= "test/acceptance/api-spec.acceptance.ts" %}
+{% include code-caption.html content= "src/__tests__/acceptance/api-spec.acceptance.ts" %}
 
 ```ts
 import {expect} from '@loopback/testlab';
@@ -767,7 +859,7 @@ const Dredd = require('dredd');
 
 describe('API (acceptance)', () => {
   let app: HelloWorldApplication;
-  // tslint:disable no-any
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   let dredd: any;
   before(initEnvironment);
   after(async () => {
@@ -828,7 +920,7 @@ two tests (one test for each user role).
 
 Here is an example of an acceptance test:
 
-{% include code-caption.html content= "test/acceptance/product.acceptance.ts" %}
+{% include code-caption.html content= "src/__tests__/acceptance/product.acceptance.ts" %}
 
 ```ts
 import {HelloWorldApplication} from '../..';

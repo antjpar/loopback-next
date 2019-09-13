@@ -1,5 +1,5 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
-// Node module: @loopback/example-todo
+// Copyright IBM Corp. 2018. All Rights Reserved.
+// Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
@@ -28,8 +28,8 @@ export class DefaultBelongsToRepository<
 > implements BelongsToRepository<TargetEntity> {
   /**
    * Constructor of DefaultBelongsToEntityCrudRepository
-   * @param getTargetRepository the getter of the related target model repository instance
-   * @param constraint the key value pair representing foreign key name to constrain
+   * @param getTargetRepository - the getter of the related target model repository instance
+   * @param constraint - the key value pair representing foreign key name to constrain
    * the target repository instance
    */
   constructor(

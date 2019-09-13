@@ -19,10 +19,12 @@ async function updateTemplateDeps() {
   const project = new Project(process.cwd());
   const packages = await project.getPackages();
 
-  const pkgs = packages.filter(pkg => !pkg.private).map(pkg => ({
-    name: pkg.name,
-    version: pkg.version,
-  }));
+  const pkgs = packages
+    .filter(pkg => !pkg.private)
+    .map(pkg => ({
+      name: pkg.name,
+      version: pkg.version,
+    }));
 
   const lbModules = {};
   for (const p of pkgs) {
@@ -61,4 +63,9 @@ async function updateTemplateDeps() {
   }
 }
 
-if (require.main === module) updateTemplateDeps();
+if (require.main === module) {
+  updateTemplateDeps().catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+}

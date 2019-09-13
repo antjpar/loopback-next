@@ -33,7 +33,7 @@ class TodoController {
     @param.path.number('id') id: number,
     @requestBody() todo: Todo,
   ): Promise<boolean> {
-    return await this.todoRepo.replaceById(id, todo);
+    return this.todoRepo.replaceById(id, todo);
   }
 }
 ```
@@ -44,7 +44,7 @@ example above, the first parameter is from source `path`, so its value will be
 parsed from a request's path.
 
 {% include note.html title="Controller documentation" content="
-See [controller](Controller.md) for more details of defining an endpoint.
+See [controllers](Controllers.md) for more details of defining an endpoint.
 " %}
 
 {% include note.html title="OpenAPI operation object" content="
@@ -74,7 +74,7 @@ async replaceTodo(
   // NO need to do the "string to number" convertion now,
   // coercion automatically handles it for you.
   id = +id;
-  return await this.todoRepo.replaceById(id, todo);
+  return this.todoRepo.replaceById(id, todo);
 }
 ```
 
@@ -121,10 +121,9 @@ decimal like "1.23" would be rejected.
 
 You can specify a parameter's type by calling shortcut decorators of `@param`
 like `@param.query.integer()`. A list of available shortcuts can be found in the
-[API Docs](https://apidocs.strongloop.com/@loopback%2fdocs/openapi-v3.html#param).
-Check out the section on
-[parameter decorators](Decorators.md#parameter-decorator) for instructions on
-how to decorate the controller parameter.
+[API Docs](https://loopback.io/doc/en/lb4/apidocs.openapi-v3.param.html). Check
+out the section on [parameter decorators](Decorators.md#parameter-decorator) for
+instructions on how to decorate the controller parameter.
 
 Here are our default validation rules for each type:
 
@@ -158,7 +157,7 @@ import {Todo} from './models';
     @param.path.number('id') id: number,
     @requestBody() todo: Todo,
   ): Promise<boolean> {
-    return await this.todoRepo.replaceById(id, todo);
+    return this.todoRepo.replaceById(id, todo);
   }
 ...
 ```
@@ -179,6 +178,110 @@ in/by the `@requestBody` decorator. Please refer to the documentation on
 [@requestBody decorator](Decorators.md#requestbody-decorator) to get a
 comprehensive idea of defining custom validation rules for your models.
 
+You can also specify the JSON schema validation rules in the model property
+decorator. The rules are added in a field called `jsonSchema`, like:
+
+```ts
+@model()
+class Product extends Entity {
+  @property({
+    name: 'name',
+    description: "The product's common name.",
+    type: 'string',
+    // Specify the JSON validation rules here
+    jsonSchema: {
+      maxLength: 30,
+      minLength: 10,
+    },
+  })
+  public name: string;
+}
+```
+
+A full list of validation keywords could be found in the
+[documentation of AJV validation keywords](https://github.com/epoberezkin/ajv#validation-keywords).
+
+One request body specification could contain multiple content types. Our
+supported content types are `json`, `urlencoded`, and `text`. The client should
+set `Content-Type` http header to `application/json`,
+`application/x-www-form-urlencoded`, or `text/plain`. Its value is matched
+against the list of media types defined in the `requestBody.content` object of
+the OpenAPI operation spec. If no matching media types is found or the type is
+not supported yet, an `UnsupportedMediaTypeError` (http statusCode 415) will be
+reported.
+
+Please note that `urlencoded` media type does not support data typing. For
+example, `key=3` is parsed as `{key: '3'}`. The raw result is then coerced by
+AJV based on the matching content schema. The coercion rules are described in
+[AJV type coercion rules](https://github.com/epoberezkin/ajv/blob/master/COERCION.md).
+
+The [qs](https://github.com/ljharb/qs) is used to parse complex strings. For
+example, given the following request body definition:
+
+```ts
+const requestBodyObject = {
+  description: 'data',
+  content: {
+    'application/x-www-form-urlencoded': {
+      schema: {
+        type: 'object',
+        properties: {
+          name: {type: 'string'},
+          location: {
+            type: 'object',
+            properties: {
+              lat: {type: 'number'},
+              lng: {type: 'number'},
+            },
+          },
+          tags: {
+            type: 'array',
+            items: {type: 'string'},
+          },
+        },
+      },
+    },
+  },
+};
+```
+
+The encoded value
+`'name=IBM%20HQ&location[lat]=0.741895&location[lng]=-73.989308&tags[0]=IT&tags[1]=NY'`
+is parsed and coerced as:
+
+```ts
+{
+  name: 'IBM HQ',
+  location: {lat: 0.741895, lng: -73.989308},
+  tags: ['IT', 'NY'],
+}
+```
+
+The request body parser options (such as `limit`) can now be configured by
+binding the value to `RestBindings.REQUEST_BODY_PARSER_OPTIONS`
+('rest.requestBodyParserOptions'). For example,
+
+```ts
+server.bind(RestBindings.REQUEST_BODY_PARSER_OPTIONS).to({
+  limit: '4MB',
+});
+```
+
+The options can be media type specific, for example:
+
+```ts
+server.bind(RestBindings.REQUEST_BODY_PARSER_OPTIONS).to({
+  json: {limit: '4MB'},
+  text: {limit: '1MB'},
+});
+```
+
+The list of options can be found in the
+[body-parser](https://github.com/expressjs/body-parser/#options) module.
+
+By default, the `limit` is `1MB`. Any request with a body length exceeding the
+limit will be rejected with http status code 413 (request entity too large).
+
 A few tips worth mentioning:
 
 - If a model property's type refers to another model, make sure it is also
@@ -188,6 +291,86 @@ A few tips worth mentioning:
   request body specification in decorators like `route()` and
   [`api()`](Decorators.md#api-decorator), this requires you to provide a
   completed request body specification.
+
+#### Extend Request Body Parsing
+
+See [Extending request body parsing](./Extending-request-body-parsing.md) for
+more details.
+
+#### Specify Custom Parser by Controller Methods
+
+In some cases, a controller method wants to handle request body parsing by
+itself, such as, to accept `multipart/form-data` for file uploads or stream-line
+a large json document. To bypass body parsing, the `'x-parser'` extension can be
+set to `'stream'` for a media type of the request body content. For example,
+
+```ts
+class FileUploadController {
+  async upload(
+    @requestBody({
+      description: 'multipart/form-data value.',
+      required: true,
+      content: {
+        'multipart/form-data': {
+          // Skip body parsing
+          'x-parser': 'stream',
+          schema: {type: 'object'},
+        },
+      },
+    })
+    request: Request,
+    @inject(RestBindings.Http.RESPONSE) response: Response,
+  ): Promise<object> {
+    const storage = multer.memoryStorage();
+    const upload = multer({storage});
+    return new Promise<object>((resolve, reject) => {
+      upload.any()(request, response, err => {
+        if (err) reject(err);
+        else {
+          resolve({
+            files: request.files,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            fields: (request as any).fields,
+          });
+        }
+      });
+    });
+  }
+}
+```
+
+The `x-parser` value can be one of the following:
+
+1. Name of the parser, such as `json`, `raw`, or `stream`
+
+- `stream`: keeps the http request body as a stream without parsing
+- `raw`: parses the http request body as a `Buffer`
+
+```ts
+{
+  'x-parser': 'stream'
+}
+```
+
+2. A body parser class
+
+```ts
+{
+  'x-parser': JsonBodyParser
+}
+```
+
+3. A body parser function, for example:
+
+```ts
+function parseJson(request: Request): Promise<RequestBody> {
+  return new JsonBodyParser().parse(request);
+}
+
+{
+  'x-parser': parseJson
+}
+```
 
 #### Localizing Errors
 

@@ -3,6 +3,361 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.13](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.12...@loopback/benchmark@1.3.13) (2019-09-06)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.12](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.11...@loopback/benchmark@1.3.12) (2019-09-03)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.11](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.10...@loopback/benchmark@1.3.11) (2019-08-19)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.10](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.9...@loopback/benchmark@1.3.10) (2019-08-15)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.9](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.8...@loopback/benchmark@1.3.9) (2019-08-15)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.8](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.7...@loopback/benchmark@1.3.8) (2019-07-31)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.7](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.6...@loopback/benchmark@1.3.7) (2019-07-26)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.6](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.5...@loopback/benchmark@1.3.6) (2019-07-17)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.5](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.4...@loopback/benchmark@1.3.5) (2019-06-28)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.4](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.3...@loopback/benchmark@1.3.4) (2019-06-21)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.3](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.2...@loopback/benchmark@1.3.3) (2019-06-20)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.2](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.1...@loopback/benchmark@1.3.2) (2019-06-17)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.3.1](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.3.0...@loopback/benchmark@1.3.1) (2019-06-06)
+
+
+### Bug Fixes
+
+* **benchmark:** fix the tests to pass ([d2cbd1d](https://github.com/strongloop/loopback-next/commit/d2cbd1d))
+
+
+
+
+
+# [1.3.0](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.2.8...@loopback/benchmark@1.3.0) (2019-06-03)
+
+
+### Features
+
+* replace tslint with eslint ([44185a7](https://github.com/strongloop/loopback-next/commit/44185a7))
+
+
+
+
+
+## [1.2.8](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.2.7...@loopback/benchmark@1.2.8) (2019-05-31)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.2.7](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.2.6...@loopback/benchmark@1.2.7) (2019-05-30)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.2.6](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.2.5...@loopback/benchmark@1.2.6) (2019-05-23)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.2.5](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.2.4...@loopback/benchmark@1.2.5) (2019-05-14)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.2.4](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.2.3...@loopback/benchmark@1.2.4) (2019-05-10)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.2.3](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.2.2...@loopback/benchmark@1.2.3) (2019-05-09)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.2.2](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.2.1...@loopback/benchmark@1.2.2) (2019-05-06)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.2.1](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.2.0...@loopback/benchmark@1.2.1) (2019-04-26)
+
+
+### Bug Fixes
+
+* fix the emitter ([db7e01c](https://github.com/strongloop/loopback-next/commit/db7e01c))
+
+
+
+
+
+# [1.2.0](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.18...@loopback/benchmark@1.2.0) (2019-04-20)
+
+
+### Features
+
+* **build:** add more TypeScript "strict" checks ([866aa2f](https://github.com/strongloop/loopback-next/commit/866aa2f))
+
+
+
+
+
+## [1.1.18](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.17...@loopback/benchmark@1.1.18) (2019-04-11)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.17](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.16...@loopback/benchmark@1.1.17) (2019-04-09)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.16](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.15...@loopback/benchmark@1.1.16) (2019-04-05)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.15](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.14...@loopback/benchmark@1.1.15) (2019-03-22)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.14](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.13...@loopback/benchmark@1.1.14) (2019-03-22)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.13](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.12...@loopback/benchmark@1.1.13) (2019-03-12)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.12](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.11...@loopback/benchmark@1.1.12) (2019-03-01)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.11](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.10...@loopback/benchmark@1.1.11) (2019-02-25)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.10](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.9...@loopback/benchmark@1.1.10) (2019-02-08)
+
+
+### Bug Fixes
+
+* **benchmark:** set TypeScript's rootDir to src ([51cba45](https://github.com/strongloop/loopback-next/commit/51cba45))
+
+
+
+
+
+## [1.1.9](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.8...@loopback/benchmark@1.1.9) (2019-01-28)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.8](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.7...@loopback/benchmark@1.1.8) (2019-01-15)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.7](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.6...@loopback/benchmark@1.1.7) (2019-01-14)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.6](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.5...@loopback/benchmark@1.1.6) (2018-12-20)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.5](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.4...@loopback/benchmark@1.1.5) (2018-12-13)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.4](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.3...@loopback/benchmark@1.1.4) (2018-11-26)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.3](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.2...@loopback/benchmark@1.1.3) (2018-11-17)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.2](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.1...@loopback/benchmark@1.1.2) (2018-11-17)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+## [1.1.1](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.1.0...@loopback/benchmark@1.1.1) (2018-11-14)
+
+**Note:** Version bump only for package @loopback/benchmark
+
+
+
+
+
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.0.1...@loopback/benchmark@1.1.0) (2018-11-08)
+
+
+### Features
+
+* allow rest routing benchmarking to take multiple numbers ([3d561bc](https://github.com/strongloop/loopback-next/commit/3d561bc))
+
+
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/strongloop/loopback-next/compare/@loopback/benchmark@1.0.0...@loopback/benchmark@1.0.1) (2018-10-17)
 

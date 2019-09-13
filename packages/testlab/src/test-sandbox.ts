@@ -1,18 +1,19 @@
-// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Copyright IBM Corp. 2018. All Rights Reserved.
 // Node module: @loopback/testlab
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {resolve, parse} from 'path';
 import {
-  copy,
-  ensureDirSync,
-  emptyDir,
-  remove,
-  ensureDir,
-  pathExists,
   appendFile,
+  copy,
+  emptyDir,
+  ensureDir,
+  ensureDirSync,
+  pathExists,
+  remove,
+  writeJson,
 } from 'fs-extra';
+import {parse, resolve} from 'path';
 
 /**
  * TestSandbox class provides a convenient way to get a reference to a
@@ -35,7 +36,7 @@ export class TestSandbox {
    * Will create a directory if it doesn't already exist. If it exists, you
    * still get an instance of the TestSandbox.
    *
-   * @param path Path of the TestSandbox. If relative (it will be resolved relative to cwd()).
+   * @param path - Path of the TestSandbox. If relative (it will be resolved relative to cwd()).
    */
   constructor(path: string) {
     // resolve ensures path is absolute / makes it absolute (relative to cwd())
@@ -77,7 +78,7 @@ export class TestSandbox {
   /**
    * Makes a directory in the TestSandbox
    *
-   * @param dir Name of directory to create (relative to TestSandbox path)
+   * @param dir - Name of directory to create (relative to TestSandbox path)
    */
   async mkdir(dir: string): Promise<void> {
     await ensureDir(resolve(this.path, dir));
@@ -89,8 +90,8 @@ export class TestSandbox {
    * will have its sourceMappingURL updated to point to the original file as
    * an absolute path so you don't need to copy the map file.
    *
-   * @param src Absolute path of file to be copied to the TestSandbox
-   * @param [dest] Optional. Destination filename of the copy operation
+   * @param src - Absolute path of file to be copied to the TestSandbox
+   * @param dest - Optional. Destination filename of the copy operation
    * (relative to TestSandbox). Original filename used if not specified.
    */
   async copyFile(src: string, dest?: string): Promise<void> {
@@ -104,5 +105,18 @@ export class TestSandbox {
       const srcMap = src + '.map';
       await appendFile(dest, `\n//# sourceMappingURL=${srcMap}`);
     }
+  }
+
+  /**
+   * Creates a new file and writes the given data serialized as JSON.
+   *
+   * @param dest - Destination filename, optionally including a relative path.
+   * @param data - The data to write.
+   */
+  async writeJsonFile(dest: string, data: unknown): Promise<void> {
+    dest = resolve(this.path, dest);
+    const destDir = parse(dest).dir;
+    await ensureDir(destDir);
+    return writeJson(dest, data, {spaces: 2});
   }
 }

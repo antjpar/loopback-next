@@ -22,7 +22,7 @@ lb4 [app] [options] [<name>]
 
 `--outDir` : Project root directory for the application.
 
-`--tslint` : Add TSLint to LoopBack4 application project.
+`--eslint` : Add ESLint to LoopBack4 application project.
 
 `--prettier` : Add Prettier to LoopBack4 application project.
 
@@ -32,6 +32,9 @@ lb4 [app] [options] [<name>]
 application project.
 
 `--vscode`: Add VSCode config files to LoopBack4 application project
+
+`--docker`: Generate Dockerfile and add npm scripts to build/run the project in
+a docker container.
 
 {% include_relative includes/CLI-std-options.md %}
 
@@ -62,7 +65,7 @@ The tool will prompt you for:
   help format, test, and build a LoopBack4 application. Defaults to `true` for
   all of the modules. The prompted modules are:
 
-  - [`tslint`](https://www.npmjs.com/package/tslint)
+  - [`eslint`](https://www.npmjs.com/package/eslint)
   - [`prettier`](https://www.npmjs.com/package/prettier)
   - [`mocha`](https://www.npmjs.com/package/mocha)
   - [`@loopback/build`](https://www.npmjs.com/package/@loopback/build)
@@ -76,6 +79,7 @@ the following files and directories:
 ```text
 .
 ├── src/
+|   ├── __tests__/
 |   ├── controllers/
 |   |   └── ping.controller.ts
 |   ├── datasources/
@@ -83,8 +87,8 @@ the following files and directories:
 |   ├── repositories/
 |   ├── application.ts
 |   ├── index.ts
+|   ├── migrate.ts
 |   └── sequence.ts
-├── test/
 └── package.json
 ```
 

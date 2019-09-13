@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2017. All Rights Reserved.
+// Copyright IBM Corp. 2017,2019. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -6,7 +6,7 @@
 /**
  * Common types/interfaces such as Class/Constructor/Options/Callback
  */
-// tslint:disable:no-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
  * Interface for classes with `new` operator and static properties/methods
@@ -19,8 +19,10 @@ export interface Class<T> {
 }
 
 /**
- * Interface for constructor functions without `new` operator, for example,
- * ```
+ * Interface for constructor functions without `new` operator.
+ *
+ * @example
+ * ```ts
  * function Foo(x) {
  *   if (!(this instanceof Foo)) { return new Foo(x); }
  *   this.x = x;
@@ -47,7 +49,11 @@ export interface AnyObject {
  * An extension of the built-in Partial<T> type which allows partial values
  * in deeply nested properties too.
  */
-export type DeepPartial<T> = {[P in keyof T]?: DeepPartial<T[P]>};
+// FIXME(rfeng): https://github.com/microsoft/TypeScript/issues/21592#issuecomment-496723647
+// export type DeepPartial<T> = {[P in keyof T]?: DeepPartial<T[P]>};
+export type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends never ? DeepPartial<T[P]> : DeepPartial<T[P]>;
+};
 
 /**
  * Type alias for strongly or weakly typed objects of T
@@ -80,7 +86,6 @@ export type NamedParameters = AnyObject;
 /**
  * Positional parameters, such as [1, 'a']
  */
-// tslint:disable-next-line:no-any
 export type PositionalParameters = any[];
 
 /**

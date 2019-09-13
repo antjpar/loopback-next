@@ -1,23 +1,19 @@
-// Copyright IBM Corp. 2018. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/cli
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-const fs = require('fs');
-const util = require('util');
 
 const debug = require('../../lib/debug')('openapi-generator');
-const {mapSchemaType} = require('./schema-helper');
+const {mapSchemaType, registerSchema} = require('./schema-helper');
 const {
   isExtension,
   titleCase,
   debugJson,
-  kebabCase,
+  toFileName,
   camelCase,
   escapeIdentifier,
-  escapePropertyOrMethodName,
-  toJsonStr,
 } = require('./utils');
 
 const HTTP_VERBS = [
@@ -101,8 +97,9 @@ function groupOperationsByController(apiSpec) {
       let controllers = ['OpenApiController'];
       if (op['x-controller-name']) {
         controllers = [op['x-controller-name']];
-      } else if (op.tags) {
-        controllers = op.tags.map(t => titleCase(t + 'Controller'));
+      } else if (Array.isArray(op.tags) && op.tags.length) {
+        // Only add the operation to first tag to avoid duplicate routes
+        controllers = [titleCase(op.tags[0] + 'Controller')];
       }
       controllers.forEach((c, index) => {
         /**
@@ -137,10 +134,50 @@ function groupOperationsByController(apiSpec) {
  * @param {object} opSpec OpenAPI operation spec
  */
 function getMethodName(opSpec) {
-  return (
-    opSpec['x-operation-name'] ||
-    escapePropertyOrMethodName(camelCase(opSpec.operationId))
-  );
+  return opSpec['x-operation-name'] || escapeIdentifier(opSpec.operationId);
+}
+
+function registerAnonymousSchema(names, schema, typeRegistry) {
+  if (!typeRegistry.promoteAnonymousSchemas) {
+    // Skip anonymous schemas
+    return;
+  }
+
+  // Skip referenced schemas
+  if (schema['x-$ref']) return;
+
+  // Only map object/array types
+  if (
+    schema.properties ||
+    schema.type === 'object' ||
+    schema.type === 'array'
+  ) {
+    if (typeRegistry.anonymousSchemaNames == null) {
+      typeRegistry.anonymousSchemaNames = new Set();
+    }
+    // Infer the schema name
+    let schemaName;
+    if (Array.isArray(names)) {
+      schemaName = names.join('-');
+    } else if (typeof names === 'string') {
+      schemaName = names;
+    }
+
+    if (!schemaName && schema.title) {
+      schemaName = schema.title;
+    }
+
+    schemaName = camelCase(schemaName);
+
+    // Make sure the schema name is unique
+    let index = 1;
+    while (typeRegistry.anonymousSchemaNames.has(schemaName)) {
+      schemaName = schemaName + index++;
+    }
+    typeRegistry.anonymousSchemaNames.add(schemaName);
+
+    registerSchema(schemaName, schema, typeRegistry);
+  }
 }
 
 /**
@@ -156,18 +193,23 @@ function buildMethodSpec(controllerSpec, op, options) {
   const paramNames = {};
   if (parameters) {
     args = parameters.map(p => {
-      const name = escapeIdentifier(p.name);
+      let name = escapeIdentifier(p.name);
       if (name in paramNames) {
         name = `${name}${paramNames[name]++}`;
       } else {
         paramNames[name] = 1;
       }
+      registerAnonymousSchema([methodName, name], p.schema, options);
       const pType = mapSchemaType(p.schema, options);
       addImportsForType(pType);
       comments.push(`@param ${name} ${p.description || ''}`);
-      return `@param({name: '${p.name}', in: '${p.in}'}) ${name}: ${
-        pType.signature
-      }`;
+
+      // Normalize parameter name to match `\w`
+      let paramName = p.name;
+      if (p.in === 'path') {
+        paramName = paramName.replace(/[^\w]+/g, '_');
+      }
+      return `@param({name: '${paramName}', in: '${p.in}'}) ${name}: ${pType.signature}`;
     });
   }
   if (op.spec.requestBody) {
@@ -182,14 +224,23 @@ function buildMethodSpec(controllerSpec, op, options) {
      */
     let bodyType = {signature: 'any'};
     const content = op.spec.requestBody.content;
-    const jsonType = content && content['application/json'];
-    if (jsonType && jsonType.schema) {
-      bodyType = mapSchemaType(jsonType.schema, options);
-      addImportsForType(bodyType);
-    }
-    let bodyName = 'body';
+    const contentType =
+      content &&
+      (content['application/json'] || content[Object.keys(content)[0]]);
+
+    let bodyName = 'requestBody';
     if (bodyName in paramNames) {
       bodyName = `${bodyName}${paramNames[bodyName]++}`;
+    }
+    bodyName = escapeIdentifier(bodyName);
+    if (contentType && contentType.schema) {
+      registerAnonymousSchema(
+        [methodName, bodyName],
+        contentType.schema,
+        options,
+      );
+      bodyType = mapSchemaType(contentType.schema, options);
+      addImportsForType(bodyType);
     }
     const bodyParam = bodyName; // + (op.spec.requestBody.required ? '' : '?');
     // Add body as the 1st param
@@ -219,9 +270,16 @@ function buildMethodSpec(controllerSpec, op, options) {
       if (isExtension(code)) continue;
       if (code !== '200' && code !== '201') continue;
       const content = responses[code].content;
-      const jsonType = content && content['application/json'];
-      if (jsonType && jsonType.schema) {
-        returnType = mapSchemaType(jsonType.schema, options);
+      const contentType =
+        content &&
+        (content['application/json'] || content[Object.keys(content)[0]]);
+      if (contentType && contentType.schema) {
+        registerAnonymousSchema(
+          [methodName, 'responseBody'],
+          contentType.schema,
+          options,
+        );
+        returnType = mapSchemaType(contentType.schema, options);
         addImportsForType(returnType);
         comments.push(`@returns ${responses[code].description || ''}`);
         break;
@@ -232,10 +290,17 @@ function buildMethodSpec(controllerSpec, op, options) {
     returnType.signature
   }>`;
   comments.unshift(op.spec.description || '', '\n');
+
+  // Normalize path variable names to alphanumeric characters including the
+  // underscore (Equivalent to [A-Za-z0-9_]). Please note `@loopback/rest`
+  // does not allow other characters that don't match `\w`.
+  const opPath = op.path.replace(/\{[^\}]+\}/g, varName =>
+    varName.replace(/[^\w\{\}]+/g, '_'),
+  );
   const methodSpec = {
     description: op.spec.description,
     comments,
-    decoration: `@operation('${op.verb}', '${op.path}')`,
+    decoration: `@operation('${op.verb}', '${opPath}')`,
     signature,
   };
   if (op.spec['x-implementation']) {
@@ -300,7 +365,7 @@ function getControllerFileName(controllerName) {
       controllerName.length - 'Controller'.length,
     );
   }
-  return kebabCase(name) + '.controller.ts';
+  return toFileName(name) + '.controller.ts';
 }
 
 module.exports = {

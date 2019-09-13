@@ -1,16 +1,18 @@
 {
-  "lerna": "3.3.0",
+  "lerna": "3.15.0",
   "packages": [
+    "acceptance/*",
     "benchmark",
     "docs",
     "examples/*",
     "packages/*",
+    "extensions/*",
     "sandbox/*"
   ],
   "command": {
     "bootstrap": {
       "concurrency": 8,
-      "ci": false
+      "forceLocal": true
     },
     "version": {
       "forcePublish": "@loopback/cli,@loopback/docs",

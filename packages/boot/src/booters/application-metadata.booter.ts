@@ -6,7 +6,7 @@
 import {CoreBindings, Application} from '@loopback/core';
 import {inject} from '@loopback/context';
 import {BootBindings} from '../keys';
-import {Booter} from '../interfaces';
+import {Booter} from '../types';
 import path = require('path');
 
 import * as debugModule from 'debug';
@@ -16,8 +16,8 @@ const debug = debugModule('loopback:boot:booter:application-metadata');
  *
  * Configure the application with metadata from `package.json`
  *
- * @param app Application instance
- * @param projectRoot Root of User Project
+ * @param app - Application instance
+ * @param projectRoot - Root of User Project
  */
 export class ApplicationMetadataBooter implements Booter {
   constructor(

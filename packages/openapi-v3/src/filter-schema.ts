@@ -3,13 +3,13 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {SchemaObject} from '@loopback/openapi-v3-types';
 import {
   getFilterJsonSchemaFor,
   getWhereJsonSchemaFor,
   Model,
 } from '@loopback/repository-json-schema';
 import {jsonToSchemaObject} from './json-to-schema';
+import {SchemaObject} from './types';
 
 /**
  * Build an OpenAPI schema describing the format of the "filter" object
@@ -18,7 +18,7 @@ import {jsonToSchemaObject} from './json-to-schema';
  * Note we don't take the model properties into account yet and return
  * a generic json schema allowing any "where" condition.
  *
- * @param modelCtor The model constructor to build the filter schema for.
+ * @param modelCtor - The model constructor to build the filter schema for.
  */
 export function getFilterSchemaFor(modelCtor: typeof Model): SchemaObject {
   const jsonSchema = getFilterJsonSchemaFor(modelCtor);
@@ -33,7 +33,7 @@ export function getFilterSchemaFor(modelCtor: typeof Model): SchemaObject {
  * Note we don't take the model properties into account yet and return
  * a generic json schema allowing any "where" condition.
  *
- * @param modelCtor The model constructor to build the filter schema for.
+ * @param modelCtor - The model constructor to build the filter schema for.
  */
 export function getWhereSchemaFor(modelCtor: typeof Model): SchemaObject {
   const jsonSchema = getWhereJsonSchemaFor(modelCtor);
